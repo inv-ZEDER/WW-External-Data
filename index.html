@@ -790,11 +790,10 @@ input,select,textarea{font-family:inherit;color:inherit;outline:none}
   });
 
   function startEdit(el){
-    const cat = el.dataset.editCat;
-    const id = el.dataset.editId;
+    const cat   = el.dataset.editCat;
+    const id    = el.dataset.editId;
     const field = el.dataset.editField;
     const placeholder = el.dataset.editPlaceholder || '';
-    const isOvr = el.classList.contains('overridden');
     const isPlaceholder = el.classList.contains('placeholder');
     const current = isPlaceholder ? '' : el.textContent.trim().replace(/\s*●\s*$/, '');
 
@@ -810,18 +809,32 @@ input,select,textarea{font-family:inherit;color:inherit;outline:none}
     input.select();
 
     let done = false;
-    const finish = (save) => {
+    const finish = async (save) => {
       if (done) return; done = true;
-      if (save){
-        const v = input.value.trim();
-        if (v !== current) {
-          setOvr(cat, id, field, v);
+      const v = input.value.trim();
+
+      if (save && v !== current) {
+        // แสดงทันที (optimistic) แล้วค่อย save ไป Sheets
+        setOvr(cat, id, field, v);
+        renderTable();
+        renderStats();
+        toast('กำลังบันทึก...', 'ok');
+        try {
+          const res = await post({action:'updateExternal', category:cat, id, field, value:v});
+          if (!res.success) throw new Error(res.error);
+          // บันทึก Sheets สำเร็จ — เคลียร์ override แล้ว reload จาก Sheets
+          setOvr(cat, id, field, '');
+          await loadAll();
           const labels = {size:'Used', totalCapacity:'Total', storageAvailability:'Storage', status:'Status', remark:'Remark'};
-          toast('บันทึก ' + (labels[field]||field) + ' แล้ว', 'ok');
+          toast('บันทึก ' + (labels[field]||field) + ' แล้ว ✓', 'ok');
+        } catch(e) {
+          // บันทึกไม่ได้ — override ยังอยู่เป็น fallback, แจ้ง error
+          toast('บันทึกไม่สำเร็จ: ' + e.message, 'err');
         }
+      } else {
+        renderTable();
+        renderStats();
       }
-      renderTable();
-      renderStats();
     };
     input.addEventListener('blur', () => finish(true));
     input.addEventListener('keydown', ev => {
