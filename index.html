@@ -1,0 +1,998 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ASK — External Data</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@600;700;800&family=Noto+Sans+Thai:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg:        #0a0a0a;
+      --s1:        #111111;
+      --s2:        #181818;
+      --s3:        #202020;
+      --border:    #2a2a2a;
+      --border2:   #333;
+      --text:      #e8e8e8;
+      --muted:     #666;
+      --muted2:    #888;
+      --accent:    #5b8def;
+      --accent-bg: rgba(91,141,239,0.1);
+      --accent-bdr:rgba(91,141,239,0.25);
+      --green:     #34d399;
+      --green-bg:  rgba(52,211,153,0.1);
+      --green-bdr: rgba(52,211,153,0.25);
+      --red:       #f87171;
+      --red-bg:    rgba(248,113,113,0.1);
+      --red-bdr:   rgba(248,113,113,0.25);
+      --yellow:    #fbbf24;
+      --yellow-bg: rgba(251,191,36,0.1);
+      --yellow-bdr:rgba(251,191,36,0.2);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Noto Sans Thai', 'Syne', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ── HEADER ─────────────────────────────── */
+    .header {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(10,10,10,0.9);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+      padding: 0 24px;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .logo {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 17px;
+      letter-spacing: 0.04em;
+      color: var(--text);
+      white-space: nowrap;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .logo-badge {
+      background: var(--accent);
+      color: #fff;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 3px;
+      letter-spacing: 1.5px;
+    }
+
+    .search-wrap {
+      flex: 1;
+      max-width: 420px;
+      position: relative;
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 12px; top: 50%;
+      transform: translateY(-50%);
+      color: var(--muted);
+      font-size: 14px;
+      pointer-events: none;
+    }
+
+    .search-input {
+      width: 100%;
+      background: var(--s2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 8px 14px 8px 36px;
+      color: var(--text);
+      font-size: 13.5px;
+      font-family: inherit;
+      outline: none;
+      transition: border-color 0.18s;
+    }
+
+    .search-input:focus { border-color: var(--accent); }
+    .search-input::placeholder { color: var(--muted); }
+
+    .header-actions { margin-left: auto; display: flex; gap: 8px; }
+
+    .btn-icon {
+      background: var(--s2);
+      border: 1px solid var(--border);
+      border-radius: 7px;
+      padding: 7px 12px;
+      color: var(--muted2);
+      font-size: 12px;
+      cursor: pointer;
+      transition: all 0.15s;
+      font-family: inherit;
+      white-space: nowrap;
+    }
+
+    .btn-icon:hover { color: var(--text); border-color: var(--border2); }
+
+    /* ── TABS ────────────────────────────────── */
+    .tabs-wrap {
+      display: flex;
+      align-items: stretch;
+      gap: 2px;
+      padding: 0 24px;
+      border-bottom: 1px solid var(--border);
+      background: var(--s1);
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .tabs-wrap::-webkit-scrollbar { display: none; }
+
+    .tab {
+      padding: 12px 18px;
+      font-size: 13px;
+      font-weight: 500;
+      font-family: 'DM Mono', monospace;
+      color: var(--muted);
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      transition: all 0.15s;
+      white-space: nowrap;
+      letter-spacing: 0.03em;
+      position: relative;
+    }
+
+    .tab:hover { color: var(--text); }
+
+    .tab.active {
+      color: var(--accent);
+      border-bottom-color: var(--accent);
+    }
+
+    .tab-count {
+      font-size: 10px;
+      background: var(--s3);
+      border-radius: 10px;
+      padding: 1px 6px;
+      margin-left: 6px;
+      color: var(--muted2);
+      font-family: 'DM Mono', monospace;
+    }
+
+    .tab.active .tab-count { background: var(--accent-bg); color: var(--accent); }
+
+    .tab-add-btn {
+      padding: 12px 14px;
+      font-size: 16px;
+      color: var(--muted);
+      cursor: pointer;
+      border: none;
+      background: none;
+      transition: color 0.15s;
+      display: flex;
+      align-items: center;
+    }
+
+    .tab-add-btn:hover { color: var(--accent); }
+
+    /* ── CONTENT ─────────────────────────────── */
+    .content {
+      padding: 24px;
+      max-width: 1440px;
+      margin: 0 auto;
+    }
+
+    /* Stats */
+    .stats-row {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 22px;
+      flex-wrap: wrap;
+    }
+
+    .stat {
+      background: var(--s1);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 9px 14px;
+      font-size: 12.5px;
+      color: var(--muted2);
+      font-family: 'DM Mono', monospace;
+    }
+
+    .stat strong { color: var(--text); font-weight: 500; }
+    .stat.green strong { color: var(--green); }
+    .stat.red strong { color: var(--red); }
+
+    /* Grid */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 14px;
+    }
+
+    /* Card */
+    .card {
+      background: var(--s1);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .card:hover {
+      border-color: var(--border2);
+      box-shadow: 0 4px 24px rgba(0,0,0,0.3);
+    }
+
+    .card-top {
+      padding: 15px 16px 12px;
+      flex: 1;
+    }
+
+    .card-row1 {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 10px;
+    }
+
+    .ext-id {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 1.2px;
+      color: var(--accent);
+      background: var(--accent-bg);
+      border: 1px solid var(--accent-bdr);
+      padding: 3px 9px;
+      border-radius: 4px;
+    }
+
+    .chip {
+      font-size: 10.5px;
+      font-weight: 600;
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-family: 'DM Mono', monospace;
+      letter-spacing: 0.5px;
+    }
+
+    .chip-av   { background: var(--green-bg);  color: var(--green);  border: 1px solid var(--green-bdr); }
+    .chip-unav { background: var(--red-bg);    color: var(--red);    border: 1px solid var(--red-bdr);   }
+    .chip-na   { background: var(--s3);        color: var(--muted);  border: 1px solid var(--border);    }
+
+    .card-title {
+      font-family: 'Syne', 'Noto Sans Thai', sans-serif;
+      font-size: 14.5px;
+      font-weight: 700;
+      line-height: 1.45;
+      margin-bottom: 10px;
+      color: var(--text);
+    }
+
+    .card-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 6px;
+    }
+
+    .meta {
+      font-size: 11.5px;
+      color: var(--muted2);
+      font-family: 'DM Mono', monospace;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .meta em { font-style: normal; color: var(--text); }
+
+    .remark {
+      font-size: 11px;
+      background: var(--yellow-bg);
+      color: var(--yellow);
+      border: 1px solid var(--yellow-bdr);
+      border-radius: 4px;
+      padding: 4px 9px;
+      margin-top: 6px;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    /* Sub-projects */
+    .sub-toggle {
+      width: 100%;
+      background: var(--s2);
+      border: none;
+      border-top: 1px solid var(--border);
+      color: var(--muted2);
+      font-size: 11.5px;
+      font-family: 'DM Mono', monospace;
+      padding: 9px 16px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      transition: color 0.15s, background 0.15s;
+      letter-spacing: 0.02em;
+    }
+
+    .sub-toggle:hover { color: var(--text); background: var(--s3); }
+
+    .sub-arrow {
+      font-size: 10px;
+      transition: transform 0.2s;
+    }
+
+    .sub-toggle.open .sub-arrow { transform: rotate(180deg); }
+
+    .sub-list {
+      display: none;
+      background: var(--s2);
+      border-top: 1px solid var(--border);
+      padding: 6px 0 10px;
+    }
+
+    .sub-list.open { display: block; }
+
+    .sub-item {
+      font-size: 12.5px;
+      color: var(--muted2);
+      padding: 5px 16px;
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      transition: background 0.1s;
+    }
+
+    .sub-item:hover { background: var(--s3); color: var(--text); }
+
+    .sub-dot {
+      width: 3px; height: 3px;
+      border-radius: 50%;
+      background: var(--muted);
+      flex-shrink: 0;
+    }
+
+    /* Empty / Loading */
+    .center-msg {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      padding: 80px 20px;
+      color: var(--muted2);
+      text-align: center;
+    }
+
+    .center-msg .ico { font-size: 40px; }
+    .center-msg p { font-size: 14px; line-height: 1.6; }
+
+    .spinner {
+      width: 28px; height: 28px;
+      border: 2.5px solid var(--border2);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 0.75s linear infinite;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── FAB ─────────────────────────────────── */
+    .fab {
+      position: fixed;
+      bottom: 30px; right: 30px;
+      width: 52px; height: 52px;
+      border-radius: 50%;
+      background: var(--accent);
+      color: #fff;
+      font-size: 22px;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 20px rgba(91,141,239,0.45);
+      transition: transform 0.18s, box-shadow 0.18s;
+      z-index: 200;
+    }
+
+    .fab:hover {
+      transform: scale(1.07);
+      box-shadow: 0 6px 28px rgba(91,141,239,0.55);
+    }
+
+    /* ── MODAL ───────────────────────────────── */
+    .overlay {
+      display: none;
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.75);
+      z-index: 300;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .overlay.open { display: flex; }
+
+    .modal {
+      background: var(--s1);
+      border: 1px solid var(--border2);
+      border-radius: 16px;
+      padding: 26px;
+      width: 100%;
+      max-height: 88vh;
+      overflow-y: auto;
+    }
+
+    .modal-sm { max-width: 380px; }
+    .modal-md { max-width: 520px; }
+    .modal-lg { max-width: 560px; }
+
+    .modal h2 {
+      font-family: 'Syne', sans-serif;
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 22px;
+      letter-spacing: 0.02em;
+    }
+
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+
+    .form-group { margin-bottom: 16px; }
+
+    .form-label {
+      display: block;
+      font-size: 11.5px;
+      font-family: 'DM Mono', monospace;
+      color: var(--muted2);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 7px;
+    }
+
+    .form-input,
+    .form-select,
+    .form-textarea {
+      width: 100%;
+      background: var(--s2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px 13px;
+      color: var(--text);
+      font-size: 13.5px;
+      font-family: inherit;
+      outline: none;
+      transition: border-color 0.18s;
+    }
+
+    .form-input:focus, .form-select:focus, .form-textarea:focus {
+      border-color: var(--accent);
+    }
+
+    .form-select option { background: var(--s2); }
+
+    .form-textarea { resize: vertical; min-height: 88px; line-height: 1.6; }
+
+    .form-hint {
+      font-size: 11px;
+      color: var(--muted);
+      margin-top: 5px;
+      font-family: 'DM Mono', monospace;
+    }
+
+    .modal-footer {
+      display: flex;
+      gap: 10px;
+      justify-content: flex-end;
+      margin-top: 26px;
+    }
+
+    .btn {
+      padding: 9px 22px;
+      border-radius: 8px;
+      font-size: 13.5px;
+      font-weight: 500;
+      font-family: inherit;
+      cursor: pointer;
+      border: none;
+      transition: all 0.15s;
+    }
+
+    .btn-primary { background: var(--accent); color: #fff; }
+    .btn-primary:hover { opacity: 0.88; }
+    .btn-primary:disabled { opacity: 0.45; cursor: not-allowed; }
+    .btn-ghost { background: transparent; color: var(--muted2); border: 1px solid var(--border); }
+    .btn-ghost:hover { color: var(--text); border-color: var(--border2); }
+
+    /* Setup info box */
+    .info-box {
+      background: var(--s2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 15px 16px;
+      margin-bottom: 20px;
+      font-size: 13px;
+      color: var(--muted2);
+      line-height: 1.85;
+    }
+
+    .info-box strong { color: var(--text); font-weight: 600; }
+    .info-box code {
+      background: var(--s3);
+      color: var(--accent);
+      padding: 1px 6px;
+      border-radius: 3px;
+      font-family: 'DM Mono', monospace;
+      font-size: 11.5px;
+    }
+
+    .step-num {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 18px; height: 18px;
+      background: var(--accent-bg);
+      border: 1px solid var(--accent-bdr);
+      color: var(--accent);
+      border-radius: 50%;
+      font-size: 10px;
+      font-family: 'DM Mono', monospace;
+      font-weight: 500;
+      margin-right: 6px;
+      flex-shrink: 0;
+    }
+
+    .step { display: flex; align-items: flex-start; margin-bottom: 6px; }
+
+    /* Toast */
+    .toast {
+      position: fixed;
+      bottom: 94px; right: 30px;
+      background: var(--s2);
+      border: 1px solid var(--border2);
+      border-radius: 10px;
+      padding: 12px 18px;
+      font-size: 13px;
+      z-index: 500;
+      opacity: 0;
+      transform: translateY(12px);
+      transition: all 0.25s;
+      pointer-events: none;
+      max-width: 280px;
+    }
+
+    .toast.show { opacity: 1; transform: translateY(0); }
+    .toast.ok  { border-color: var(--green-bdr); color: var(--green); }
+    .toast.err { border-color: var(--red-bdr);   color: var(--red);   }
+
+    /* Responsive */
+    @media (max-width: 640px) {
+      .header { padding: 0 16px; gap: 12px; }
+      .content { padding: 16px; }
+      .form-row { grid-template-columns: 1fr; }
+      .grid { grid-template-columns: 1fr; }
+      .fab { bottom: 20px; right: 20px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── HEADER ── -->
+<header class="header">
+  <div class="logo">
+    <span>ASK</span>
+    <span class="logo-badge">EXT</span>
+  </div>
+  <div class="search-wrap">
+    <span class="search-icon">⌕</span>
+    <input class="search-input" id="searchInput" type="text"
+      placeholder="ค้นหา External ID หรือ Project..." oninput="onSearch(this.value)" />
+  </div>
+  <div class="header-actions">
+    <button class="btn-icon" onclick="openSetup()">⚙ ตั้งค่า</button>
+  </div>
+</header>
+
+<!-- ── TABS ── -->
+<nav class="tabs-wrap" id="tabsBar">
+  <div class="center-msg" style="padding:10px 0;flex-direction:row;gap:10px;">
+    <div class="spinner" style="width:14px;height:14px;border-width:2px;"></div>
+    <span style="font-size:13px;">กำลังโหลด...</span>
+  </div>
+</nav>
+
+<!-- ── MAIN ── -->
+<main class="content">
+  <div id="statsRow" class="stats-row" style="display:none;"></div>
+  <div id="mainContent">
+    <div class="center-msg">
+      <div class="spinner"></div>
+      <p>กำลังโหลดข้อมูล...</p>
+    </div>
+  </div>
+</main>
+
+<!-- ── FAB ── -->
+<button class="fab" onclick="openAdd()" title="เพิ่ม External ใหม่">+</button>
+
+<!-- ── TOAST ── -->
+<div class="toast" id="toast"></div>
+
+<!-- ─────────────── MODALS ─────────────── -->
+
+<!-- Setup -->
+<div class="overlay" id="overlaySetup">
+  <div class="modal modal-lg">
+    <h2>⚙ ตั้งค่าการเชื่อมต่อ</h2>
+    <div class="info-box">
+      <div class="step"><span class="step-num">1</span>เปิด Google Sheets → <code>Extensions</code> → <code>Apps Script</code></div>
+      <div class="step"><span class="step-num">2</span>วางโค้ดจากไฟล์ <code>Code.gs</code> ทับทั้งหมด แล้วกด Save</div>
+      <div class="step"><span class="step-num">3</span>กด <code>Deploy</code> → <code>New deployment</code> → Type: <code>Web app</code></div>
+      <div class="step"><span class="step-num">4</span>ตั้ง <strong>Execute as: Me</strong> / <strong>Who has access: Anyone</strong></div>
+      <div class="step"><span class="step-num">5</span>Copy URL ที่ได้ มาวางด้านล่าง</div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Apps Script Web App URL</label>
+      <input class="form-input" id="urlInput" type="text"
+        placeholder="https://script.google.com/macros/s/..." />
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" id="setupCancelBtn" onclick="closeSetup()">ยกเลิก</button>
+      <button class="btn btn-primary" onclick="saveUrl()">บันทึกและโหลด</button>
+    </div>
+  </div>
+</div>
+
+<!-- Add External -->
+<div class="overlay" id="overlayAdd">
+  <div class="modal modal-lg">
+    <h2>+ เพิ่ม External ใหม่</h2>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">หมวดหมู่ *</label>
+        <select class="form-select" id="addCat"></select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">รหัส External *</label>
+        <input class="form-input" id="addId" placeholder="เช่น WW23" />
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">ชื่อ Project หลัก *</label>
+      <input class="form-input" id="addMain" placeholder="ชื่อ Project หลักของ External นี้" />
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">ขนาด (Spaces)</label>
+        <input class="form-input" id="addSize" placeholder="เช่น 512 GB" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">Storage Availability</label>
+        <select class="form-select" id="addStorAvail">
+          <option value="Available">Available</option>
+          <option value="Unavailable">Unavailable</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Status</label>
+        <select class="form-select" id="addStatus">
+          <option value="Available">Available</option>
+          <option value="Unavailable">Unavailable</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Remark</label>
+        <input class="form-input" id="addRemark" placeholder="หมายเหตุ (ถ้ามี)" />
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Sub-projects</label>
+      <textarea class="form-textarea" id="addSubs"
+        placeholder="ใส่ Project ย่อย 1 บรรทัด = 1 Project"></textarea>
+      <p class="form-hint">ขึ้นบรรทัดใหม่สำหรับแต่ละ Sub-project</p>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeAdd()">ยกเลิก</button>
+      <button class="btn btn-primary" id="addSubmit" onclick="submitAdd()">เพิ่ม External</button>
+    </div>
+  </div>
+</div>
+
+<!-- Add Category -->
+<div class="overlay" id="overlayCat">
+  <div class="modal modal-sm">
+    <h2>＋ หมวดหมู่ใหม่</h2>
+    <div class="form-group">
+      <label class="form-label">ชื่อหมวดหมู่ *</label>
+      <input class="form-input" id="catName" placeholder="เช่น CT" />
+      <p class="form-hint">จะสร้าง Sheet ใหม่ใน Google Sheets โดยอัตโนมัติ</p>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeCat()">ยกเลิก</button>
+      <button class="btn btn-primary" onclick="submitCat()">สร้าง</button>
+    </div>
+  </div>
+</div>
+
+<!-- ─────────────── SCRIPT ─────────────── -->
+<script>
+  const STORE_KEY = 'ask_ext_v1_url';
+  let API = localStorage.getItem(STORE_KEY) || '';
+  let allData = {};
+  let categories = [];
+  let activeTab = '';
+  let query = '';
+
+  // ── INIT ──────────────────────────────
+  window.onload = () => {
+    if (!API) { openSetup(true); return; }
+    loadAll();
+  };
+
+  // ── API ───────────────────────────────
+  async function get(params) {
+    const u = new URL(API);
+    for (const [k, v] of Object.entries(params)) u.searchParams.set(k, v);
+    const r = await fetch(u.toString());
+    return r.json();
+  }
+
+  async function post(body) {
+    const r = await fetch(API, {
+      method: 'POST',
+      body: JSON.stringify(body)
+    });
+    return r.json();
+  }
+
+  async function loadAll() {
+    showLoader();
+    try {
+      const res = await get({ action: 'getAllData' });
+      if (!res.success) throw new Error(res.error);
+      categories = res.categories;
+      allData = res.data;
+      activeTab = categories[0] || '';
+      renderTabs();
+      renderContent();
+    } catch (e) {
+      showErr('โหลดข้อมูลไม่สำเร็จ: ' + e.message);
+    }
+  }
+
+  // ── RENDER ────────────────────────────
+  function renderTabs() {
+    document.getElementById('tabsBar').innerHTML =
+      categories.map(c => {
+        const cnt = (allData[c] || []).length;
+        return `<div class="tab ${c === activeTab ? 'active' : ''}" onclick="switchTab('${c}')">
+          ${c}<span class="tab-count">${cnt}</span>
+        </div>`;
+      }).join('') +
+      `<button class="tab-add-btn" onclick="openCat()" title="เพิ่มหมวดหมู่">＋</button>`;
+  }
+
+  function switchTab(cat) {
+    activeTab = cat;
+    query = '';
+    document.getElementById('searchInput').value = '';
+    renderTabs();
+    renderContent();
+  }
+
+  function renderContent() {
+    const filtered = getFiltered();
+    const all = allData[activeTab] || [];
+
+    // Stats
+    const avail = all.filter(e => e.storageAvailability === 'Available').length;
+    const statsRow = document.getElementById('statsRow');
+    statsRow.style.display = 'flex';
+    statsRow.innerHTML = `
+      <div class="stat">External: <strong>${all.length}</strong></div>
+      <div class="stat green">Storage Available: <strong>${avail}</strong></div>
+      <div class="stat red">Unavailable: <strong>${all.length - avail}</strong></div>
+      ${query ? `<div class="stat">ค้นหา: <strong>${filtered.length} ผล</strong></div>` : ''}
+    `;
+
+    const main = document.getElementById('mainContent');
+    if (!filtered.length) {
+      main.innerHTML = `<div class="center-msg">
+        <div class="ico">${query ? '🔍' : '📦'}</div>
+        <p>${query ? `ไม่พบ "${query}"` : 'ยังไม่มี External ในหมวดนี้'}</p>
+      </div>`;
+      return;
+    }
+
+    main.innerHTML = `<div class="grid">${filtered.map(cardHTML).join('')}</div>`;
+  }
+
+  function cardHTML(e) {
+    const avClass = e.storageAvailability === 'Available' ? 'chip-av'
+                  : e.storageAvailability === 'Unavailable' ? 'chip-unav' : 'chip-na';
+    const hasSub = e.subProjects && e.subProjects.length > 0;
+    const uid = 'sub_' + e.id.replace(/\W/g, '');
+    return `
+      <div class="card">
+        <div class="card-top">
+          <div class="card-row1">
+            <span class="ext-id">${e.id}</span>
+            <span class="chip ${avClass}">${e.storageAvailability || 'N/A'}</span>
+          </div>
+          <div class="card-title">${e.mainProject}</div>
+          <div class="card-meta">
+            ${e.size ? `<span class="meta">💾 <em>${e.size}</em></span>` : ''}
+            ${e.status ? `<span class="meta">◉ <em>${e.status}</em></span>` : ''}
+          </div>
+          ${e.remark ? `<div class="remark">⚠ ${e.remark}</div>` : ''}
+        </div>
+        ${hasSub ? `
+          <button class="sub-toggle" id="tog_${uid}" onclick="toggleSub('${uid}')">
+            <span>📁 ${e.subProjects.length} sub-projects</span>
+            <span class="sub-arrow">▾</span>
+          </button>
+          <div class="sub-list" id="${uid}">
+            ${e.subProjects.map(s => `<div class="sub-item"><span class="sub-dot"></span>${s}</div>`).join('')}
+          </div>
+        ` : ''}
+      </div>`;
+  }
+
+  function toggleSub(uid) {
+    const list = document.getElementById(uid);
+    const tog  = document.getElementById('tog_' + uid);
+    list.classList.toggle('open');
+    tog.classList.toggle('open');
+  }
+
+  // ── SEARCH ────────────────────────────
+  function onSearch(q) {
+    query = q.toLowerCase().trim();
+    renderContent();
+  }
+
+  function getFiltered() {
+    const data = allData[activeTab] || [];
+    if (!query) return data;
+    return data.filter(e =>
+      e.id.toLowerCase().includes(query) ||
+      e.mainProject.toLowerCase().includes(query) ||
+      (e.subProjects || []).some(s => s.toLowerCase().includes(query))
+    );
+  }
+
+  // ── ADD EXTERNAL ──────────────────────
+  function openAdd() {
+    document.getElementById('addCat').innerHTML =
+      categories.map(c => `<option value="${c}">${c}</option>`).join('');
+    if (activeTab) document.getElementById('addCat').value = activeTab;
+    document.getElementById('overlayAdd').classList.add('open');
+  }
+
+  function closeAdd() {
+    document.getElementById('overlayAdd').classList.remove('open');
+    ['addId','addMain','addSize','addRemark','addSubs'].forEach(id =>
+      document.getElementById(id).value = '');
+  }
+
+  async function submitAdd() {
+    const cat    = document.getElementById('addCat').value;
+    const id     = document.getElementById('addId').value.trim();
+    const main   = document.getElementById('addMain').value.trim();
+    const size   = document.getElementById('addSize').value.trim();
+    const sav    = document.getElementById('addStorAvail').value;
+    const status = document.getElementById('addStatus').value;
+    const remark = document.getElementById('addRemark').value.trim();
+    const subs   = document.getElementById('addSubs').value
+                     .split('\n').map(s => s.trim()).filter(Boolean);
+
+    if (!id || !main) { toast('กรุณากรอกรหัสและชื่อ Project', 'err'); return; }
+
+    const btn = document.getElementById('addSubmit');
+    btn.disabled = true; btn.textContent = 'กำลังบันทึก...';
+    try {
+      const res = await post({ action:'addExternal', category:cat, id, mainProject:main,
+        storageAvailability:sav, size, remark, status, subProjects:subs });
+      if (!res.success) throw new Error(res.error);
+      toast('เพิ่ม External สำเร็จ ✓', 'ok');
+      closeAdd();
+      await loadAll();
+      switchTab(cat);
+    } catch(e) { toast(e.message, 'err'); }
+    finally { btn.disabled = false; btn.textContent = 'เพิ่ม External'; }
+  }
+
+  // ── ADD CATEGORY ──────────────────────
+  function openCat()  { document.getElementById('overlayCat').classList.add('open'); }
+  function closeCat() { document.getElementById('overlayCat').classList.remove('open');
+                        document.getElementById('catName').value = ''; }
+
+  async function submitCat() {
+    const name = document.getElementById('catName').value.trim();
+    if (!name) { toast('กรุณากรอกชื่อ', 'err'); return; }
+    try {
+      const res = await post({ action:'addCategory', name });
+      if (!res.success) throw new Error(res.error);
+      toast(`สร้าง "${name}" สำเร็จ ✓`, 'ok');
+      closeCat();
+      await loadAll();
+      switchTab(name);
+    } catch(e) { toast(e.message, 'err'); }
+  }
+
+  // ── SETUP ─────────────────────────────
+  function openSetup(required = false) {
+    document.getElementById('urlInput').value = API;
+    document.getElementById('setupCancelBtn').style.display = required ? 'none' : '';
+    document.getElementById('overlaySetup').classList.add('open');
+  }
+
+  function closeSetup() {
+    document.getElementById('overlaySetup').classList.remove('open');
+  }
+
+  async function saveUrl() {
+    const u = document.getElementById('urlInput').value.trim();
+    if (!u) { toast('กรุณากรอก URL', 'err'); return; }
+    API = u;
+    localStorage.setItem(STORE_KEY, u);
+    closeSetup();
+    await loadAll();
+  }
+
+  // ── UTILS ─────────────────────────────
+  function showLoader() {
+    document.getElementById('mainContent').innerHTML =
+      `<div class="center-msg"><div class="spinner"></div><p>กำลังโหลดข้อมูล...</p></div>`;
+    document.getElementById('tabsBar').innerHTML =
+      `<div class="center-msg" style="padding:10px 0;flex-direction:row;gap:10px;">
+        <div class="spinner" style="width:14px;height:14px;border-width:2px;"></div>
+        <span style="font-size:13px;">กำลังโหลด...</span>
+       </div>`;
+    document.getElementById('statsRow').style.display = 'none';
+  }
+
+  function showErr(msg) {
+    document.getElementById('mainContent').innerHTML =
+      `<div class="center-msg"><div class="ico">⚠</div><p>${msg}</p>
+       <button class="btn btn-ghost" style="margin-top:12px;" onclick="openSetup()">ตรวจสอบการตั้งค่า</button></div>`;
+    document.getElementById('tabsBar').innerHTML = '';
+  }
+
+  let toastT;
+  function toast(msg, type = 'ok') {
+    const el = document.getElementById('toast');
+    el.textContent = msg;
+    el.className = `toast ${type} show`;
+    clearTimeout(toastT);
+    toastT = setTimeout(() => el.classList.remove('show'), 3600);
+  }
+
+  // Close on backdrop click
+  ['overlaySetup','overlayAdd','overlayCat'].forEach(id => {
+    document.getElementById(id).addEventListener('click', function(e) {
+      if (e.target !== this) return;
+      if (id === 'overlaySetup' && !API) return;
+      this.classList.remove('open');
+    });
+  });
+</script>
+</body>
+</html>
