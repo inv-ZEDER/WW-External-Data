@@ -1,0 +1,1056 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>WW External Data</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Noto+Sans+Thai:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+:root{
+  --bg:#0a0a0a;        --bg-2:#0e0e0e;      --bg-3:#141414;     --bg-4:#1a1a1a;
+  --border:#1a1a1a;    --border-2:#1f1f1f;  --border-3:#2a2a2a;
+  --text:#e6e6e6;      --text-2:#a0a0a0;    --muted:#666;       --muted-2:#888;     --muted-3:#555;
+  --red:#dc2626;       --red-bg:rgba(220,38,38,.08);  --red-bdr:rgba(220,38,38,.25);
+  --red-2:#e23636;     --red-glow:rgba(220,38,38,.6);
+  --green:#86a06f;     --green-bg:rgba(134,160,111,.08);
+  --yellow:#d9a55c;
+  --mono:'JetBrains Mono',ui-monospace,monospace;
+  --ui:'Inter','Noto Sans Thai',system-ui,sans-serif;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{font-family:var(--ui);background:var(--bg);color:var(--text);font-feature-settings:"cv11";overflow:hidden;font-size:13px}
+button{font-family:inherit;color:inherit;cursor:pointer}
+input,select,textarea{font-family:inherit;color:inherit;outline:none}
+
+/* ── LAYOUT ─────────────────────────────────────── */
+.app{display:grid;grid-template-columns:240px 1fr;height:100vh;overflow:hidden}
+
+/* ── SIDEBAR ────────────────────────────────────── */
+.side{background:var(--bg);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden}
+.side-head{display:flex;align-items:center;gap:10px;padding:16px 18px 14px}
+.brand-mark{width:24px;height:24px;border-radius:6px;background:var(--red);color:#000;font-weight:800;font-size:13px;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 0 12px var(--red-glow)}
+.brand-title{font-size:13.5px;font-weight:600;letter-spacing:-.01em;line-height:1.2}
+.brand-sub{font-family:var(--mono);font-size:10.5px;color:var(--muted);letter-spacing:.02em;margin-top:2px}
+
+.side-search{margin:0 12px 14px;padding:7px 10px;background:var(--bg-3);border:1px solid var(--border-2);border-radius:6px;display:flex;align-items:center;gap:8px;transition:border-color .12s}
+.side-search:focus-within{border-color:var(--red)}
+.side-search input{flex:1;background:transparent;border:none;font-size:12.5px;color:var(--text);min-width:0}
+.side-search input::placeholder{color:var(--muted)}
+.side-search .ico{color:var(--muted)}
+.side-search .kbd{font-family:var(--mono);font-size:10px;color:var(--muted-3);padding:1px 5px;background:var(--bg-4);border-radius:3px}
+
+.side-section{padding:14px 18px 6px;font-size:10.5px;font-weight:500;color:var(--muted-3);letter-spacing:.1em;text-transform:uppercase;display:flex;align-items:center;justify-content:space-between}
+.side-add{background:none;border:none;color:var(--muted-2);font-size:13px;padding:0 4px;border-radius:4px;transition:all .12s}
+.side-add:hover{color:var(--red);background:var(--red-bg)}
+
+.side-list{display:flex;flex-direction:column;gap:1px;padding:0 8px}
+.side-item{position:relative;padding:6px 10px;border-radius:6px;display:flex;align-items:center;gap:10px;font-size:13px;color:var(--text-2);cursor:pointer;transition:background .12s,color .12s}
+.side-item:hover{background:var(--bg-3);color:var(--text)}
+.side-item.active{background:var(--bg-4);color:#fff;font-weight:500}
+.side-item .ico{width:14px;color:var(--muted);font-size:12px;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0}
+.side-item.active .ico{color:var(--red)}
+.side-item .count{margin-left:auto;font-family:var(--mono);font-size:11px;color:var(--muted);transition:opacity .12s}
+.side-item .del{position:absolute;right:6px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--muted);width:18px;height:18px;border-radius:4px;display:none;align-items:center;justify-content:center;font-size:11px;line-height:1}
+.side-item:hover .del{display:flex}
+.side-item:hover .count{opacity:0}
+.side-item .del:hover{color:var(--red);background:var(--red-bg)}
+
+.side-foot{margin-top:auto;border-top:1px solid var(--border);padding:12px 14px;display:flex;align-items:center;gap:10px}
+.side-avatar{width:26px;height:26px;border-radius:50%;background:var(--red);color:#000;font-weight:700;font-size:11.5px;display:flex;align-items:center;justify-content:center}
+.side-foot .name{font-size:12.5px;font-weight:500;color:var(--text);line-height:1.2}
+.side-foot .role{font-size:11px;color:var(--muted);font-family:var(--mono)}
+.side-foot .gear{margin-left:auto;background:none;border:none;color:var(--muted-2);width:26px;height:26px;border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:14px;transition:all .12s}
+.side-foot .gear:hover{background:var(--bg-3);color:var(--text)}
+
+/* ── MAIN ───────────────────────────────────────── */
+.main{display:flex;flex-direction:column;min-width:0;overflow:hidden}
+.topbar{height:48px;display:flex;align-items:center;gap:12px;padding:0 20px;border-bottom:1px solid var(--border);font-size:12.5px;flex-shrink:0}
+.crumb{color:var(--muted-2)}.crumb-sep{color:var(--muted-3);margin:0 2px}.crumb-active{color:var(--text);font-weight:500}
+.crumb-meta{color:var(--muted);font-family:var(--mono);font-size:11px;margin-left:6px}
+.tb-right{margin-left:auto;display:flex;gap:6px;align-items:center}
+.tb-btn{padding:5px 10px;font-size:12px;background:transparent;border:1px solid var(--border-2);border-radius:5px;color:var(--text-2);display:inline-flex;align-items:center;gap:6px;transition:all .12s}
+.tb-btn:hover{color:var(--text);border-color:var(--border-3)}
+.tb-btn.primary{background:var(--red);border:none;color:#fff;font-weight:500;padding:5px 12px}
+.tb-btn.primary:hover{background:#e6342c}
+
+.page-head{padding:22px 24px 18px;display:flex;align-items:flex-end;justify-content:space-between;gap:24px;border-bottom:1px solid var(--border);flex-shrink:0}
+.page-title-wrap{display:flex;align-items:baseline;gap:14px;min-width:0;flex:1 1 auto}
+.page-title{font-size:22px;font-weight:600;letter-spacing:-.02em;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+.page-count{font-size:12.5px;color:var(--muted-2);font-family:var(--mono);white-space:nowrap;flex-shrink:0}
+.page-stats{display:flex;gap:24px;flex-shrink:0;font-family:var(--mono)}
+.ps{display:flex;flex-direction:column;gap:4px;white-space:nowrap}
+.ps-lbl{font-size:10px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;white-space:nowrap}
+.ps-val{font-size:16px;color:#fff;font-weight:500;font-variant-numeric:tabular-nums;white-space:nowrap}
+.ps-val.ok{color:var(--green)}
+.ps-val.bad{color:var(--red)}
+.ps-val.warn{color:var(--yellow)}
+
+.toolbar{height:40px;display:flex;align-items:center;gap:6px;padding:0 20px 0 24px;border-bottom:1px solid var(--border);font-size:12px;flex-shrink:0}
+.tg-btn{padding:4px 10px;font-size:12px;background:transparent;border:1px solid var(--border);border-radius:5px;color:var(--muted-2);display:inline-flex;align-items:center;gap:6px;transition:all .12s}
+.tg-btn:hover{color:var(--text);border-color:var(--border-3)}
+.tg-btn.active{background:var(--bg-4);border-color:var(--border-3);color:#fff}
+.tg-div{width:1px;height:18px;background:var(--border);margin:0 4px}
+.tg-count{margin-left:auto;font-family:var(--mono);color:var(--muted);font-size:11px}
+
+/* ── TABLE ──────────────────────────────────────── */
+.tablewrap{flex:1;overflow-y:auto;overflow-x:hidden}
+.tablewrap::-webkit-scrollbar{width:10px}
+.tablewrap::-webkit-scrollbar-track{background:transparent}
+.tablewrap::-webkit-scrollbar-thumb{background:var(--bg-4);border-radius:5px;border:2px solid var(--bg)}
+.tablewrap::-webkit-scrollbar-thumb:hover{background:var(--border-3)}
+
+.thead,.row{display:grid;grid-template-columns:24px 76px minmax(0,1fr) 110px 170px 120px 32px;align-items:center;padding:0 16px 0 20px;gap:12px}
+.thead{height:32px;font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);background:var(--bg-2);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:5}
+.row{min-height:46px;padding-top:8px;padding-bottom:8px;font-size:13px;border-bottom:1px solid #161616;cursor:pointer;transition:background .1s}
+.row:hover{background:var(--bg-2)}
+.row.open{background:var(--bg-3)}
+
+.cb{width:14px;height:14px;border-radius:3px;border:1px solid var(--border-3);background:transparent;display:inline-flex;align-items:center;justify-content:center;font-size:9px;color:#000;font-weight:700;transition:all .12s}
+.row:hover .cb{border-color:var(--muted)}
+.row.open .cb{background:var(--red);border-color:var(--red);color:#000}
+
+.col-id{font-family:var(--mono);font-size:12.5px;color:#fff;font-weight:500;letter-spacing:.04em}
+.col-title{display:flex;align-items:center;gap:10px;overflow:hidden;min-width:0}
+.col-title .name{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--text)}
+.col-title .subc{font-size:11px;color:var(--muted);font-family:var(--mono);white-space:nowrap;flex-shrink:0}
+.col-title .remark-pill{background:var(--red-bg);color:var(--yellow);border:1px solid rgba(217,165,92,.25);padding:2px 7px;border-radius:4px;font-size:10px;font-family:var(--mono);letter-spacing:.04em;flex-shrink:0;display:inline-flex;align-items:center;gap:4px}
+
+.col-size{font-family:var(--mono);font-size:12px;color:var(--text-2);font-variant-numeric:tabular-nums}
+.col-size .total{color:var(--muted)}
+.col-size em{font-style:normal;color:var(--text)}
+
+.cap{display:flex;flex-direction:column;gap:4px;min-width:0}
+.cap-bar{height:4px;background:var(--bg-4);border-radius:2px;overflow:hidden}
+.cap-fill{height:100%;border-radius:2px;transition:width .4s ease}
+.cap-fill.low{background:var(--green)}
+.cap-fill.mid{background:var(--yellow)}
+.cap-fill.high{background:var(--red)}
+.cap-lbl{display:flex;justify-content:space-between;font-family:var(--mono);font-size:10.5px;color:var(--muted-2);font-variant-numeric:tabular-nums}
+.cap-pct.low{color:var(--green)}.cap-pct.mid{color:var(--yellow)}.cap-pct.high{color:var(--red)}
+.cap.empty{color:var(--muted-3);font-family:var(--mono);font-size:11px}
+
+.col-status{display:inline-flex;align-items:center;gap:7px;font-size:12px}
+.dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.dot.ok{background:var(--green);box-shadow:0 0 6px rgba(134,160,111,.55)}
+.dot.bad{background:var(--red);box-shadow:0 0 6px var(--red-glow)}
+.dot.na{background:var(--muted-3)}
+.col-status .lbl-ok{color:var(--text-2)}
+.col-status .lbl-bad{color:var(--red)}
+.col-status .lbl-na{color:var(--muted-2)}
+
+.col-actions{display:flex;justify-content:flex-end;gap:2px}
+.row-btn{background:none;border:none;color:var(--muted);width:24px;height:24px;border-radius:4px;display:none;align-items:center;justify-content:center;font-size:13px}
+.row:hover .row-btn{display:flex}
+.row-btn:hover{background:var(--bg-4);color:var(--text)}
+.row-btn.del:hover{color:var(--red);background:var(--red-bg)}
+
+/* Expanded row */
+.expanded{background:var(--bg-2);border-bottom:1px solid var(--border);padding:18px 24px 22px;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,340px);gap:32px}
+.exp-section{}
+.exp-head{font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.exp-head .accent{color:var(--red);cursor:pointer}
+.exp-head .accent:hover{text-decoration:underline}
+
+.sub-list{display:flex;flex-direction:column;gap:4px;margin-bottom:10px}
+.sub-item{padding:7px 10px;font-size:12.5px;color:var(--text);background:var(--bg-3);border:1px solid var(--border-2);border-radius:5px;display:flex;align-items:center;gap:10px;transition:border-color .12s}
+.sub-item:hover{border-color:var(--border-3)}
+.sub-idx{font-family:var(--mono);font-size:10.5px;color:var(--muted-3);min-width:22px}
+.sub-name{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sub-del{background:none;border:none;color:var(--muted);width:20px;height:20px;border-radius:4px;display:none;align-items:center;justify-content:center;font-size:11px}
+.sub-item:hover .sub-del{display:flex}
+.sub-del:hover{color:var(--red);background:var(--red-bg)}
+
+.add-sub{display:flex;gap:6px;margin-top:2px}
+.add-sub input{flex:1;background:var(--bg-3);border:1px solid var(--border-2);border-radius:5px;padding:7px 10px;font-size:12.5px;color:var(--text);transition:border-color .12s}
+.add-sub input:focus{border-color:var(--red)}
+.add-sub input::placeholder{color:var(--muted)}
+.add-sub button{padding:7px 14px;background:var(--red);border:none;border-radius:5px;color:#fff;font-size:12px;font-weight:500;transition:opacity .12s}
+.add-sub button:hover{opacity:.88}
+.add-sub button:disabled{opacity:.45;cursor:not-allowed}
+
+.details{display:flex;flex-direction:column;gap:1px}
+.det-row{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:6px 0;border-bottom:1px dashed var(--border-2);font-size:12.5px}
+.det-key{font-family:var(--mono);font-size:10.5px;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;white-space:nowrap;flex-shrink:0}
+.det-val{font-family:var(--mono);font-size:12px;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0;text-align:right}
+
+/* Inline-edit cells */
+.det-edit{cursor:pointer;border-radius:4px;padding:2px 6px;margin:-2px -6px;transition:background .12s,outline-color .12s;outline:1px dashed transparent;display:inline-block;max-width:calc(100% + 12px)}
+.det-edit:hover{background:var(--bg-4);outline-color:var(--border-3)}
+.det-edit.placeholder{color:var(--muted-3)}
+.det-edit.overridden{color:var(--red-2);font-style:italic;position:relative}
+.det-edit.overridden::after{content:'●';color:var(--red);margin-left:6px;font-size:7px;vertical-align:middle;font-style:normal}
+.det-input{font-family:var(--mono);font-size:12px;color:#fff;background:var(--bg-4);border:1px solid var(--red);border-radius:4px;padding:3px 8px;width:60%;min-width:140px;text-align:right;outline:none}
+.det-input::placeholder{color:var(--muted)}
+.exp-head .reset-link{background:none;border:none;color:var(--muted-2);font-family:var(--mono);font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;padding:2px 6px;border-radius:4px;margin-left:auto;transition:all .12s}
+.exp-head .reset-link:hover{color:var(--red);background:var(--red-bg)}
+.exp-hint{color:var(--muted-3);font-style:italic;font-family:var(--ui);text-transform:none;letter-spacing:0;font-size:11px}
+.remark-box{margin-top:12px;padding:9px 12px;background:rgba(217,165,92,.06);border-left:2px solid var(--yellow);border-radius:4px;color:var(--yellow);font-size:12.5px;line-height:1.5;display:flex;gap:8px}
+.remark-box .ico{flex-shrink:0}
+
+/* ── Empty / Loading / Error ────────────────────── */
+.center-msg{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:80px 20px;color:var(--muted-2);text-align:center;flex:1}
+.center-msg .ico{font-size:32px;color:var(--muted-3)}
+.center-msg p{font-size:13.5px;line-height:1.6;max-width:380px}
+.spinner{width:24px;height:24px;border:2.5px solid var(--border-3);border-top-color:var(--red);border-radius:50%;animation:spin .75s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ── FAB (mobile only — desktop uses topbar button) ── */
+.fab{display:none;position:fixed;bottom:24px;right:24px;height:48px;width:48px;border-radius:50%;background:var(--red);color:#fff;font-size:22px;border:none;align-items:center;justify-content:center;box-shadow:0 8px 24px rgba(220,38,38,.4);z-index:50;transition:all .15s}
+.fab:hover{background:#e6342c;transform:translateY(-1px)}
+
+/* ── MODAL ───────────────────────────────────────── */
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:300;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(4px)}
+.overlay.open{display:flex}
+.modal{background:var(--bg-2);border:1px solid var(--border-3);border-radius:12px;padding:24px;width:100%;max-height:88vh;overflow-y:auto;box-shadow:0 24px 48px rgba(0,0,0,.5)}
+.modal-sm{max-width:400px}.modal-md{max-width:520px}.modal-lg{max-width:560px}
+.modal h2{font-family:var(--ui);font-size:17px;font-weight:600;margin-bottom:6px;letter-spacing:-.01em;color:#fff;display:flex;align-items:center;gap:10px}
+.modal-sub{font-size:13px;color:var(--muted-2);margin-bottom:20px;line-height:1.5}
+.modal-icon{width:28px;height:28px;border-radius:6px;background:var(--red);color:#000;font-weight:800;font-size:14px;display:flex;align-items:center;justify-content:center}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.form-group{margin-bottom:14px}
+.form-label{display:block;font-size:11px;font-family:var(--mono);color:var(--muted-2);letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px}
+.form-input,.form-select,.form-textarea{width:100%;background:var(--bg-3);border:1px solid var(--border-2);border-radius:6px;padding:9px 12px;color:var(--text);font-size:13px;transition:border-color .15s}
+.form-input:focus,.form-select:focus,.form-textarea:focus{border-color:var(--red)}
+.form-input::placeholder,.form-textarea::placeholder{color:var(--muted)}
+.form-select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath fill='%23888' d='M5 6 0 0h10z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:30px}
+.form-select option{background:var(--bg-3);color:var(--text)}
+.form-textarea{resize:vertical;min-height:80px;line-height:1.6;font-family:inherit}
+.form-hint{font-size:11px;color:var(--muted);margin-top:5px;font-family:var(--mono)}
+
+.modal-footer{display:flex;gap:8px;justify-content:flex-end;margin-top:22px;padding-top:14px;border-top:1px solid var(--border)}
+.btn{padding:8px 18px;border-radius:6px;font-size:13px;font-weight:500;border:1px solid transparent;transition:all .15s}
+.btn-primary{background:var(--red);color:#fff}.btn-primary:hover{background:#e6342c}
+.btn-primary:disabled{opacity:.45;cursor:not-allowed}
+.btn-ghost{background:transparent;color:var(--muted-2);border-color:var(--border-2)}.btn-ghost:hover{color:var(--text);border-color:var(--border-3)}
+.btn-danger{background:var(--red-bg);color:var(--red);border-color:var(--red-bdr)}.btn-danger:hover{background:var(--red);color:#fff;border-color:var(--red)}
+
+.confirm-msg{font-size:13.5px;color:var(--text);line-height:1.6;margin-bottom:10px}
+.confirm-note{font-size:11.5px;color:var(--muted);background:var(--bg-3);border:1px solid var(--border-2);border-radius:5px;padding:8px 12px;font-family:var(--mono);display:flex;align-items:flex-start;gap:8px}
+
+.info-box{background:var(--bg-3);border:1px solid var(--border-2);border-radius:8px;padding:14px 16px;margin-bottom:18px;font-size:12.5px;color:var(--text-2);line-height:1.8}
+.info-box strong{color:var(--text);font-weight:600}
+.info-box code{background:var(--bg-4);color:var(--red);padding:1px 6px;border-radius:3px;font-family:var(--mono);font-size:11.5px}
+.step{display:flex;align-items:flex-start;margin-bottom:5px}
+.step-num{display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;background:var(--red-bg);border:1px solid var(--red-bdr);color:var(--red);border-radius:50%;font-size:10px;font-family:var(--mono);font-weight:500;margin-right:8px;margin-top:1px;flex-shrink:0}
+
+/* ── TOAST ──────────────────────────────────────── */
+.toast{position:fixed;bottom:24px;left:50%;transform:translate(-50%,16px);background:var(--bg-3);border:1px solid var(--border-3);border-radius:8px;padding:10px 16px;font-size:12.5px;z-index:500;opacity:0;transition:all .25s;pointer-events:none;max-width:380px;display:flex;align-items:center;gap:10px;box-shadow:0 12px 32px rgba(0,0,0,.5)}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+.toast.ok{border-color:rgba(134,160,111,.35)}
+.toast.ok .toast-ico{color:var(--green)}
+.toast.err{border-color:var(--red-bdr)}
+.toast.err .toast-ico{color:var(--red)}
+.toast-ico{font-size:13px}
+
+/* ── Responsive ─────────────────────────────────── */
+/* Narrower-than-comfortable desktop: drop capacity bar (Used/Total still shows %) */
+@media(max-width:1180px){
+  .thead,.row{grid-template-columns:24px 70px minmax(0,1fr) 110px 120px 32px;gap:10px;padding:0 14px 0 18px}
+  .thead .h-cap,.row .col-cap{display:none}
+  .page-stats{gap:18px}
+  .ps-val{font-size:14px}
+  .page-title{font-size:19px}
+}
+/* Tablet / mobile: hide sidebar, drop status column too */
+@media(max-width:880px){
+  .app{grid-template-columns:1fr}
+  .side{display:none}
+  .fab{display:inline-flex}
+  .tb-btn:not(.primary){display:none}
+  .thead,.row{grid-template-columns:24px 68px minmax(0,1fr) 100px 32px;gap:10px;padding:0 14px}
+  .thead .h-status,.row .col-status{display:none}
+  .expanded{grid-template-columns:1fr;padding:16px;gap:20px}
+  .page-head{padding:16px;flex-wrap:wrap}
+  .page-stats{order:2;flex-basis:100%;gap:14px;overflow-x:auto}
+  .toolbar{padding:0 14px;gap:4px;overflow-x:auto}
+}
+</style>
+</head>
+<body>
+
+<div class="app">
+  <!-- ── SIDEBAR ── -->
+  <aside class="side">
+    <div class="side-head">
+      <div class="brand-mark">W</div>
+      <div>
+        <div class="brand-title">WW External Data</div>
+        <div class="brand-sub">ww-studio</div>
+      </div>
+    </div>
+
+    <div class="side-search">
+      <span class="ico">⌕</span>
+      <input id="searchInput" type="text" placeholder="Search drives…" oninput="onSearch(this.value)" />
+      <span class="kbd">⌘K</span>
+    </div>
+
+    <div class="side-section">
+      <span>Categories</span>
+      <button class="side-add" onclick="openCat()" title="เพิ่มหมวดหมู่">＋</button>
+    </div>
+    <div class="side-list" id="catList"></div>
+
+    <div class="side-section"><span>Views</span></div>
+    <div class="side-list">
+      <div class="side-item" id="viewAlert" onclick="filterAlert()">
+        <span class="ico" style="color:var(--red)">!</span>
+        <span>Needs attention</span>
+        <span class="count" id="alertCount">0</span>
+      </div>
+    </div>
+
+    <div class="side-foot">
+      <div class="side-avatar" id="userInitial">·</div>
+      <div>
+        <div class="name" id="userName">WW Studio</div>
+        <div class="role">External archive</div>
+      </div>
+      <button class="gear" onclick="openSetup()" title="ตั้งค่า">⚙</button>
+    </div>
+  </aside>
+
+  <!-- ── MAIN ── -->
+  <section class="main">
+    <div class="topbar">
+      <span class="crumb">External</span>
+      <span class="crumb-sep">/</span>
+      <span class="crumb-active" id="crumbActive">—</span>
+      <span class="crumb-meta" id="crumbMeta"></span>
+      <div class="tb-right">
+        <button class="tb-btn" onclick="loadAll()" title="Refresh">↻ Sync</button>
+        <button class="tb-btn primary" onclick="openAdd()">＋ New drive</button>
+      </div>
+    </div>
+
+    <div class="page-head">
+      <div class="page-title-wrap">
+        <div class="page-title" id="pageTitle">—</div>
+        <div class="page-count" id="pageCount"></div>
+      </div>
+      <div class="page-stats" id="pageStats"></div>
+    </div>
+
+    <div class="toolbar">
+      <button class="tg-btn active" id="fAll"  onclick="setFilter('all')">All</button>
+      <button class="tg-btn"        id="fAv"   onclick="setFilter('available')">Available</button>
+      <button class="tg-btn"        id="fUn"   onclick="setFilter('unavailable')">Unavailable</button>
+      <button class="tg-btn"        id="fHi"   onclick="setFilter('high')">≥ 80% full</button>
+      <div class="tg-div"></div>
+      <button class="tg-btn" onclick="cycleSort()" id="sortBtn">↑↓ <span id="sortLbl">ID</span> <span style="color:var(--muted-3)">desc</span></button>
+      <span class="tg-count" id="filterCount"></span>
+    </div>
+
+    <div class="tablewrap" id="tableWrap">
+      <div class="center-msg" id="loader">
+        <div class="spinner"></div>
+        <p>กำลังโหลดข้อมูล...</p>
+      </div>
+    </div>
+  </section>
+</div>
+
+<button class="fab" onclick="openAdd()" title="เพิ่ม External ใหม่">＋</button>
+
+<!-- ── TOAST ── -->
+<div class="toast" id="toast"><span class="toast-ico" id="toastIco">✓</span><span id="toastMsg"></span></div>
+
+<!-- ── CONFIRM MODAL ── -->
+<div class="overlay" id="overlayConfirm">
+  <div class="modal modal-sm">
+    <h2 id="confirmTitle">ยืนยันการลบ</h2>
+    <p class="confirm-msg" id="confirmMsg"></p>
+    <p class="confirm-note"><span>⚠</span> ข้อมูลจะหายในเว็บเท่านั้น ไม่กระทบ Google Sheets</p>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeConfirm()">ยกเลิก</button>
+      <button class="btn btn-danger" id="confirmOkBtn">ลบ</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── SETUP MODAL ── -->
+<div class="overlay" id="overlaySetup">
+  <div class="modal modal-lg">
+    <h2><span class="modal-icon">⚙</span> ตั้งค่าการเชื่อมต่อ</h2>
+    <p class="modal-sub">เชื่อมต่อกับ Google Apps Script ของคุณเพื่อโหลดข้อมูล</p>
+    <div class="info-box">
+      <div class="step"><span class="step-num">1</span>เปิด Google Sheets → <code>Extensions</code> → <code>Apps Script</code></div>
+      <div class="step"><span class="step-num">2</span>วางโค้ดจากไฟล์ <code>Code.gs</code> ทับทั้งหมด แล้วกด Save</div>
+      <div class="step"><span class="step-num">3</span>กด <code>Deploy</code> → <code>New deployment</code> → Type: <code>Web app</code></div>
+      <div class="step"><span class="step-num">4</span>ตั้ง <strong>Execute as: Me</strong> / <strong>Who has access: Anyone</strong></div>
+      <div class="step"><span class="step-num">5</span>Copy URL มาวางด้านล่าง</div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Apps Script Web App URL</label>
+      <input class="form-input" id="urlInput" type="text" placeholder="https://script.google.com/macros/s/..." />
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" id="setupCancelBtn" onclick="closeSetup()">ยกเลิก</button>
+      <button class="btn btn-primary" onclick="saveUrl()">บันทึกและโหลด</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── ADD EXTERNAL MODAL ── -->
+<div class="overlay" id="overlayAdd">
+  <div class="modal modal-lg">
+    <h2><span class="modal-icon">＋</span> เพิ่ม External ใหม่</h2>
+    <p class="modal-sub">บันทึก External Drive ใหม่ลงในระบบ</p>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">หมวดหมู่ *</label>
+        <select class="form-select" id="addCat"></select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">รหัส External *</label>
+        <input class="form-input" id="addId" placeholder="เช่น WW23" />
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">ชื่อ Project หลัก *</label>
+      <input class="form-input" id="addMain" placeholder="ชื่อ Project หลักของ External นี้" />
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">ข้อมูลที่ใช้อยู่ (Used)</label>
+        <input class="form-input" id="addSize" placeholder="เช่น 280 GB หรือ 1.2 TB" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">ความจุรวม (Total)</label>
+        <input class="form-input" id="addTotal" placeholder="เช่น 2 TB หรือ 512 GB" />
+        <p class="form-hint">ใส่เพื่อแสดง progress bar</p>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Storage Availability</label>
+        <select class="form-select" id="addStorAvail">
+          <option value="Available">Available</option>
+          <option value="Unavailable">Unavailable</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Status</label>
+        <select class="form-select" id="addStatus">
+          <option value="Available">Available</option>
+          <option value="Unavailable">Unavailable</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Remark</label>
+      <input class="form-input" id="addRemark" placeholder="หมายเหตุ (ถ้ามี)" />
+    </div>
+    <div class="form-group">
+      <label class="form-label">Sub-projects</label>
+      <textarea class="form-textarea" id="addSubs" placeholder="ใส่ Project ย่อย 1 บรรทัด = 1 Project"></textarea>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeAdd()">ยกเลิก</button>
+      <button class="btn btn-primary" id="addSubmit" onclick="submitAdd()">เพิ่ม External</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── ADD CATEGORY MODAL ── -->
+<div class="overlay" id="overlayCat">
+  <div class="modal modal-sm">
+    <h2><span class="modal-icon">＋</span> หมวดหมู่ใหม่</h2>
+    <p class="modal-sub">สร้าง sheet ใหม่ใน Google Sheets อัตโนมัติ</p>
+    <div class="form-group">
+      <label class="form-label">ชื่อหมวดหมู่ *</label>
+      <input class="form-input" id="catName" placeholder="เช่น CT" />
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeCat()">ยกเลิก</button>
+      <button class="btn btn-primary" onclick="submitCat()">สร้าง</button>
+    </div>
+  </div>
+</div>
+
+<!-- ─────────────── SCRIPT ─────────────── -->
+<script>
+  const STORE_KEY = 'ask_ext_v1_url';
+  const DEL_KEY   = 'ask_ext_v1_del';
+  const OVR_KEY   = 'ask_ext_v1_overrides';
+  const OPEN_KEY  = 'ask_ext_v1_open';
+
+  let API = localStorage.getItem(STORE_KEY) || '';
+  let allData = {}, categories = [], activeTab = '', query = '';
+  let filter = 'all', sort = 'id';
+  let openRow = null; // currently expanded ext id
+  let del = JSON.parse(localStorage.getItem(DEL_KEY) || '{"cats":[],"exts":[],"subs":[]}');
+  let overrides = JSON.parse(localStorage.getItem(OVR_KEY) || '{}');
+
+  function saveDel(){ localStorage.setItem(DEL_KEY, JSON.stringify(del)); }
+  function saveOvr(){ localStorage.setItem(OVR_KEY, JSON.stringify(overrides)); }
+  const isCatDel = c => del.cats.includes(c);
+  const isExtDel = (c,i) => del.exts.includes(c+':::'+i);
+  const isSubDel = (c,i,s) => del.subs.includes(c+':::'+i+':::'+s);
+
+  // ── OVERRIDES ─────────────────────────────────
+  function getOvr(cat, id){ return overrides[cat+':::'+id] || {}; }
+  function setOvr(cat, id, field, value){
+    const key = cat+':::'+id;
+    if (!overrides[key]) overrides[key] = {};
+    if (value === '' || value == null){
+      delete overrides[key][field];
+      if (!Object.keys(overrides[key]).length) delete overrides[key];
+    } else {
+      overrides[key][field] = value;
+    }
+    saveOvr();
+  }
+  function clearOvr(cat, id){ delete overrides[cat+':::'+id]; saveOvr(); }
+  function applyOvr(e){
+    const o = getOvr(e.category, e.id);
+    return { ...e, ...o, _ovr:o, _hasOvr:Object.keys(o).length > 0 };
+  }
+
+  // ── INIT ─────────────────────────────────────────
+  window.onload = () => { if (!API) openSetup(true); else loadAll(); };
+
+  // ── API ──────────────────────────────────────────
+  async function get(params){
+    const u = new URL(API);
+    for (const [k,v] of Object.entries(params)) u.searchParams.set(k,v);
+    return (await fetch(u.toString())).json();
+  }
+  async function post(body){
+    return (await fetch(API,{method:'POST',body:JSON.stringify(body)})).json();
+  }
+  async function loadAll(){
+    showLoader();
+    try {
+      const res = await get({action:'getAllData'});
+      if (!res.success) throw new Error(res.error);
+      categories = res.categories;
+      allData    = res.data;
+      const visible = categories.filter(c => !isCatDel(c));
+      if (!activeTab || isCatDel(activeTab)) activeTab = visible[0] || '';
+      render();
+    } catch(e){ showErr('โหลดข้อมูลไม่สำเร็จ: '+e.message); }
+  }
+
+  // ── PARSE SIZE ───────────────────────────────────
+  function parseGB(str){
+    if (!str) return null;
+    const s = str.toString().toUpperCase().trim();
+    const n = parseFloat(s);
+    if (isNaN(n)) return null;
+    if (s.includes('TB')) return n * 1024;
+    if (s.includes('MB')) return n / 1024;
+    return n;
+  }
+  function fmtGB(gb){
+    if (gb == null) return '';
+    if (gb >= 1024) return (gb/1024).toFixed(gb >= 10240 ? 1 : 2) + ' TB';
+    return Math.round(gb) + ' GB';
+  }
+
+  // ── DATA HELPERS ─────────────────────────────────
+  function getVisibleExts(cat){
+    return (allData[cat] || [])
+      .filter(e => !isExtDel(cat, e.id))
+      .map(applyOvr);
+  }
+  function getAlertCount(){
+    let n = 0;
+    categories.filter(c => !isCatDel(c)).forEach(c => {
+      getVisibleExts(c).forEach(e => {
+        if (e.storageAvailability === 'Unavailable') { n++; return; }
+        const u = parseGB(e.size), t = parseGB(e.totalCapacity);
+        if (u && t && (u/t) >= 0.85) n++;
+      });
+    });
+    return n;
+  }
+  function applyFilterSort(list){
+    let out = list.slice();
+    if (filter === 'available')   out = out.filter(e => e.storageAvailability === 'Available');
+    if (filter === 'unavailable') out = out.filter(e => e.storageAvailability === 'Unavailable');
+    if (filter === 'high') {
+      out = out.filter(e => {
+        const u = parseGB(e.size), t = parseGB(e.totalCapacity);
+        return u && t && (u/t) >= 0.80;
+      });
+    }
+    if (query) {
+      out = out.filter(e => {
+        const visSubs = (e.subProjects||[]).filter(s => !isSubDel(e.category,e.id,s));
+        return e.id.toLowerCase().includes(query) ||
+               (e.mainProject||'').toLowerCase().includes(query) ||
+               visSubs.some(s => s.toLowerCase().includes(query));
+      });
+    }
+    if (sort === 'id')      out.sort((a,b) => b.id.localeCompare(a.id));
+    if (sort === 'usage')   out.sort((a,b) => (parseGB(b.size)||0) - (parseGB(a.size)||0));
+    if (sort === 'project') out.sort((a,b) => (a.mainProject||'').localeCompare(b.mainProject||''));
+    return out;
+  }
+
+  // ── RENDER ───────────────────────────────────────
+  function render(){
+    renderSidebar();
+    renderTopbar();
+    renderStats();
+    renderTable();
+  }
+
+  function renderSidebar(){
+    const visible = categories.filter(c => !isCatDel(c));
+    document.getElementById('catList').innerHTML = visible.map(c => `
+      <div class="side-item ${c===activeTab?'active':''}" onclick="switchTab('${esc(c)}')">
+        <span class="ico">◰</span>
+        <span>${esc(c)}</span>
+        <span class="count">${getVisibleExts(c).length}</span>
+        <button class="del" onclick="event.stopPropagation();askDelCat('${esc(c)}')" title="ลบหมวดหมู่">✕</button>
+      </div>
+    `).join('');
+    document.getElementById('alertCount').textContent = getAlertCount();
+    // username from first cat
+    const initial = (activeTab && activeTab[0]) || 'A';
+    document.getElementById('userInitial').textContent = initial.toUpperCase();
+  }
+
+  function renderTopbar(){
+    document.getElementById('crumbActive').textContent = activeTab || '—';
+    document.getElementById('pageTitle').textContent   = activeTab ? `${activeTab} — Working Drives` : 'No category';
+    const all = getVisibleExts(activeTab);
+    document.getElementById('pageCount').textContent = `${all.length} drives`;
+    document.getElementById('crumbMeta').textContent  = '· updated just now';
+  }
+
+  function renderStats(){
+    const all = getVisibleExts(activeTab);
+    const avail = all.filter(e => e.storageAvailability === 'Available').length;
+    const unav  = all.length - avail;
+    let usedGB = 0, totalGB = 0, nearFull = 0;
+    all.forEach(e => {
+      const u = parseGB(e.size), t = parseGB(e.totalCapacity);
+      if (u) usedGB += u;
+      if (t) totalGB += t;
+      if (u && t && (u/t) >= 0.80) nearFull++;
+    });
+    const storage = totalGB > 0 ? `${fmtGB(usedGB)} / ${fmtGB(totalGB)}` : fmtGB(usedGB) || '—';
+    document.getElementById('pageStats').innerHTML = `
+      <div class="ps"><div class="ps-lbl">Storage</div><div class="ps-val">${storage}</div></div>
+      <div class="ps"><div class="ps-lbl">Available</div><div class="ps-val ok">${String(avail).padStart(2,'0')}</div></div>
+      <div class="ps"><div class="ps-lbl">Unavailable</div><div class="ps-val bad">${String(unav).padStart(2,'0')}</div></div>
+      <div class="ps"><div class="ps-lbl">Near full</div><div class="ps-val warn">${String(nearFull).padStart(2,'0')}</div></div>
+    `;
+  }
+
+  function renderTable(){
+    const all = getVisibleExts(activeTab);
+    const list = applyFilterSort(all);
+    document.getElementById('filterCount').textContent =
+      `Showing ${list.length} of ${all.length}` + (query ? ` · "${query}"` : '');
+
+    const wrap = document.getElementById('tableWrap');
+    if (!activeTab) {
+      wrap.innerHTML = `<div class="center-msg"><div class="ico">▢</div><p>ยังไม่มีหมวดหมู่<br>กดปุ่ม ＋ ในแถบด้านซ้ายเพื่อเริ่มต้น</p></div>`;
+      return;
+    }
+    if (!list.length) {
+      wrap.innerHTML = `
+        <div class="thead">
+          <div></div><div>ID</div><div>Project</div><div>Remaining</div>
+          <div class="h-cap">Capacity</div><div class="h-status">Status</div><div></div>
+        </div>
+        <div class="center-msg"><div class="ico">${query?'⌕':'▢'}</div>
+          <p>${query ? `ไม่พบ "${esc(query)}"` : 'ยังไม่มี External ในหมวดนี้<br>กดปุ่ม "＋ New drive" เพื่อเริ่มต้น'}</p>
+        </div>`;
+      return;
+    }
+
+    wrap.innerHTML = `
+      <div class="thead">
+        <div></div>
+        <div>ID</div>
+        <div>Project</div>
+        <div>Remaining</div>
+        <div class="h-cap">Capacity</div>
+        <div class="h-status">Status</div>
+        <div></div>
+      </div>
+      <div id="rows">${list.map(rowHTML).join('')}</div>
+    `;
+  }
+
+  function rowHTML(e){
+    const isOpen = openRow === e.category + ':' + e.id;
+    const u = parseGB(e.size), t = parseGB(e.totalCapacity);
+    const pct = (u && t && t > 0) ? Math.min(100, Math.round((u/t)*100)) : null;
+    const tier = pct == null ? 'na' : pct < 60 ? 'low' : pct < 80 ? 'mid' : 'high';
+    const unav = e.storageAvailability === 'Unavailable';
+    const visSubs = (e.subProjects||[]).filter(s => !isSubDel(e.category, e.id, s));
+
+    const statusCell = e.storageAvailability === 'Available'
+      ? `<div class="col-status"><span class="dot ok"></span><span class="lbl-ok">Available</span></div>`
+      : e.storageAvailability === 'Unavailable'
+      ? `<div class="col-status"><span class="dot bad"></span><span class="lbl-bad">Unavailable</span></div>`
+      : `<div class="col-status"><span class="dot na"></span><span class="lbl-na">—</span></div>`;
+
+    const capCell = pct != null
+      ? `<div class="cap">
+           <div class="cap-bar"><div class="cap-fill ${tier}" style="width:${pct}%"></div></div>
+           <div class="cap-lbl"><span>${esc(e.size)}</span><span class="cap-pct ${tier}">${pct}%</span></div>
+         </div>`
+      : `<div class="cap empty">— no total set —</div>`;
+
+    const freeGB = (u != null && t != null && t > 0) ? (t - u) : null;
+    const sizeCell = freeGB != null
+      ? `<div class="col-size"><em>${fmtGB(freeGB)}</em> <span class="total">free</span></div>`
+      : (e.size
+        ? `<div class="col-size" style="color:var(--muted-3)">— no total set —</div>`
+        : `<div class="col-size" style="color:var(--muted-3)">—</div>`);
+
+    return `
+      <div class="row ${isOpen?'open':''}" onclick="toggleRow('${esc(e.category)}','${esc(e.id)}')">
+        <div class="cb">${isOpen?'✓':''}</div>
+        <div class="col-id">${esc(e.id)}</div>
+        <div class="col-title">
+          <span class="name">${esc(e.mainProject||'—')}</span>
+          <span class="subc">${visSubs.length} sub${visSubs.length===1?'':'s'}</span>
+          ${e.remark?`<span class="remark-pill">⚠ remark</span>`:''}
+        </div>
+        ${sizeCell}
+        <div class="col-cap">${capCell}</div>
+        ${statusCell}
+        <div class="col-actions">
+          <button class="row-btn del" onclick="event.stopPropagation();askDelExt('${esc(e.category)}','${esc(e.id)}')" title="ลบ External">🗑</button>
+        </div>
+      </div>
+      ${isOpen ? expandedHTML(e, visSubs, pct) : ''}
+    `;
+  }
+
+  function expandedHTML(e, visSubs, pct){
+    const uid = 'sub_' + e.id.replace(/\W/g,'') + '_' + e.category.replace(/\W/g,'');
+    const editCell = (field, value, placeholder) => {
+      const isOvr = e._ovr.hasOwnProperty(field);
+      const isEmpty = !value;
+      const display = isEmpty ? '—' : esc(value);
+      const cls = ['det-edit'];
+      if (isOvr) cls.push('overridden');
+      if (isEmpty) cls.push('placeholder');
+      return `<span class="${cls.join(' ')}" data-edit-cat="${esc(e.category)}" data-edit-id="${esc(e.id)}" data-edit-field="${field}" data-edit-placeholder="${esc(placeholder||'')}" title="คลิกเพื่อแก้ไข">${display}</span>`;
+    };
+    return `
+      <div class="expanded">
+        <div class="exp-section">
+          <div class="exp-head">
+            <span>Sub-projects</span>
+            <span style="color:var(--muted-3)">·</span>
+            <span style="font-family:var(--mono)">${visSubs.length}</span>
+          </div>
+          <div class="sub-list">
+            ${visSubs.length ? visSubs.map((s,i) => `
+              <div class="sub-item">
+                <span class="sub-idx">${String(i+1).padStart(2,'0')}</span>
+                <span class="sub-name">${esc(s)}</span>
+                <button class="sub-del" onclick="askDelSub('${esc(e.category)}','${esc(e.id)}','${esc(s).replace(/'/g,"\\'")}')">✕</button>
+              </div>
+            `).join('') : `<div style="font-size:12.5px;color:var(--muted);padding:8px 2px;font-family:var(--mono)">— ยังไม่มี sub-project —</div>`}
+          </div>
+          <div class="add-sub" onclick="event.stopPropagation()">
+            <input id="subInput_${uid}" placeholder="ชื่อ project ใหม่..." onkeydown="if(event.key==='Enter'){event.stopPropagation();submitSub('${esc(e.category)}','${esc(e.id)}','${uid}')}" />
+            <button id="subBtn_${uid}" onclick="event.stopPropagation();submitSub('${esc(e.category)}','${esc(e.id)}','${uid}')">＋ เพิ่ม</button>
+          </div>
+        </div>
+        <div class="exp-section">
+          <div class="exp-head">
+            <span>Details</span>
+            <span class="exp-hint">— คลิกค่าเพื่อแก้ไข</span>
+            ${e._hasOvr ? `<button class="reset-link" onclick="event.stopPropagation();resetExtOverrides('${esc(e.category)}','${esc(e.id)}')" title="รีเซ็ตค่าที่แก้ทั้งหมด">↶ reset</button>` : ''}
+          </div>
+          <div class="details">
+            <div class="det-row"><span class="det-key">External ID</span><span class="det-val">${esc(e.id)}</span></div>
+            <div class="det-row"><span class="det-key">Category</span><span class="det-val">${esc(e.category)}</span></div>
+            <div class="det-row"><span class="det-key">Used</span>${editCell('size', e.size, 'เช่น 280 GB')}</div>
+            <div class="det-row"><span class="det-key">Total</span>${editCell('totalCapacity', e.totalCapacity, 'เช่น 2 TB')}</div>
+            ${pct!=null?`<div class="det-row"><span class="det-key">Usage</span><span class="det-val">${pct}%</span></div>`:''}
+            <div class="det-row"><span class="det-key">Storage</span>${editCell('storageAvailability', e.storageAvailability, 'Available / Unavailable')}</div>
+            <div class="det-row"><span class="det-key">Status</span>${editCell('status', e.status, 'เช่น In use, Backup')}</div>
+            <div class="det-row"><span class="det-key">Remark</span>${editCell('remark', e.remark, 'หมายเหตุ')}</div>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  // ── INLINE EDIT ──────────────────────────────────
+  document.addEventListener('click', e => {
+    const t = e.target.closest('.det-edit');
+    if (!t) return;
+    if (t.tagName === 'INPUT') return;
+    e.stopPropagation();
+    startEdit(t);
+  });
+
+  function startEdit(el){
+    const cat   = el.dataset.editCat;
+    const id    = el.dataset.editId;
+    const field = el.dataset.editField;
+    const placeholder = el.dataset.editPlaceholder || '';
+    const isPlaceholder = el.classList.contains('placeholder');
+    const current = isPlaceholder ? '' : el.textContent.trim().replace(/\s*●\s*$/, '');
+
+    const input = document.createElement('input');
+    input.type = 'text';
+    input.className = 'det-input';
+    input.value = current;
+    input.placeholder = placeholder;
+    input.dataset.editField = field;
+
+    el.replaceWith(input);
+    input.focus();
+    input.select();
+
+    let done = false;
+    const finish = async (save) => {
+      if (done) return; done = true;
+      const v = input.value.trim();
+
+      if (save && v !== current) {
+        // แสดงทันที (optimistic) แล้วค่อย save ไป Sheets
+        setOvr(cat, id, field, v);
+        renderTable();
+        renderStats();
+        toast('กำลังบันทึก...', 'ok');
+        try {
+          const res = await post({action:'updateExternal', category:cat, id, field, value:v});
+          if (!res.success) throw new Error(res.error);
+          // บันทึก Sheets สำเร็จ — เคลียร์ override แล้ว reload จาก Sheets
+          setOvr(cat, id, field, '');
+          await loadAll();
+          const labels = {size:'Used', totalCapacity:'Total', storageAvailability:'Storage', status:'Status', remark:'Remark'};
+          toast('บันทึก ' + (labels[field]||field) + ' แล้ว ✓', 'ok');
+        } catch(e) {
+          // บันทึกไม่ได้ — override ยังอยู่เป็น fallback, แจ้ง error
+          toast('บันทึกไม่สำเร็จ: ' + e.message, 'err');
+        }
+      } else {
+        renderTable();
+        renderStats();
+      }
+    };
+    input.addEventListener('blur', () => finish(true));
+    input.addEventListener('keydown', ev => {
+      if (ev.key === 'Enter')  { ev.preventDefault(); finish(true);  }
+      if (ev.key === 'Escape') { ev.preventDefault(); finish(false); }
+    });
+  }
+
+  function resetExtOverrides(cat, id){
+    askConfirm('รีเซ็ตค่าที่แก้',
+      `รีเซ็ตค่าที่แก้ระหว่าง web ของ <strong style="color:#fff">"${esc(id)}"</strong> ทั้งหมด?`,
+      () => {
+        clearOvr(cat, id);
+        renderTable(); renderStats();
+        toast('รีเซ็ตค่าของ "'+id+'" แล้ว','ok');
+      });
+  }
+
+  // ── INTERACTIONS ─────────────────────────────────
+  function switchTab(cat){ activeTab=cat; query=''; openRow=null; document.getElementById('searchInput').value=''; render(); }
+
+  function toggleRow(cat, id){
+    const key = cat + ':' + id;
+    openRow = (openRow === key) ? null : key;
+    renderTable();
+  }
+
+  function setFilter(f){
+    filter = f;
+    ['fAll','fAv','fUn','fHi'].forEach(id => document.getElementById(id).classList.remove('active'));
+    document.getElementById({all:'fAll',available:'fAv',unavailable:'fUn',high:'fHi'}[f]).classList.add('active');
+    renderTable();
+  }
+
+  function cycleSort(){
+    const order = ['id','project','usage'];
+    sort = order[(order.indexOf(sort)+1) % order.length];
+    document.getElementById('sortLbl').textContent = {id:'ID',project:'Project',usage:'Usage'}[sort];
+    renderTable();
+  }
+
+  function filterAlert(){
+    setFilter('unavailable');
+    document.getElementById('viewAlert').classList.add('active');
+  }
+
+  // ── SEARCH ───────────────────────────────────────
+  function onSearch(q){ query = q.toLowerCase().trim(); renderTable(); }
+
+  // ── ADD EXTERNAL ─────────────────────────────────
+  function openAdd(){
+    const visible = categories.filter(c => !isCatDel(c));
+    if (!visible.length) { toast('สร้างหมวดหมู่ก่อน','err'); openCat(); return; }
+    document.getElementById('addCat').innerHTML = visible.map(c=>`<option value="${esc(c)}">${esc(c)}</option>`).join('');
+    if (activeTab) document.getElementById('addCat').value = activeTab;
+    document.getElementById('overlayAdd').classList.add('open');
+    setTimeout(()=>document.getElementById('addId').focus(),50);
+  }
+  function closeAdd(){
+    document.getElementById('overlayAdd').classList.remove('open');
+    ['addId','addMain','addSize','addTotal','addRemark','addSubs'].forEach(id=>document.getElementById(id).value='');
+  }
+  async function submitAdd(){
+    const cat    = document.getElementById('addCat').value;
+    const id     = document.getElementById('addId').value.trim();
+    const main   = document.getElementById('addMain').value.trim();
+    const size   = document.getElementById('addSize').value.trim();
+    const total  = document.getElementById('addTotal').value.trim();
+    const sav    = document.getElementById('addStorAvail').value;
+    const status = document.getElementById('addStatus').value;
+    const remark = document.getElementById('addRemark').value.trim();
+    const subs   = document.getElementById('addSubs').value.split('\n').map(s=>s.trim()).filter(Boolean);
+    if (!id || !main) { toast('กรุณากรอกรหัสและชื่อ Project','err'); return; }
+
+    const btn = document.getElementById('addSubmit');
+    btn.disabled = true; btn.textContent = 'กำลังบันทึก...';
+    try {
+      const res = await post({action:'addExternal',category:cat,id,mainProject:main,storageAvailability:sav,size,totalCapacity:total,remark,status,subProjects:subs});
+      if (!res.success) throw new Error(res.error);
+      toast('เพิ่ม External สำเร็จ','ok');
+      closeAdd(); await loadAll(); switchTab(cat);
+    } catch(e){ toast(e.message,'err'); }
+    finally { btn.disabled = false; btn.textContent = 'เพิ่ม External'; }
+  }
+
+  // ── ADD CATEGORY ─────────────────────────────────
+  function openCat(){ document.getElementById('overlayCat').classList.add('open'); setTimeout(()=>document.getElementById('catName').focus(),50); }
+  function closeCat(){ document.getElementById('overlayCat').classList.remove('open'); document.getElementById('catName').value=''; }
+  async function submitCat(){
+    const name = document.getElementById('catName').value.trim();
+    if (!name) { toast('กรุณากรอกชื่อ','err'); return; }
+    try {
+      const res = await post({action:'addCategory',name});
+      if (!res.success) throw new Error(res.error);
+      toast(`สร้าง "${name}" สำเร็จ`,'ok');
+      closeCat(); await loadAll(); switchTab(name);
+    } catch(e){ toast(e.message,'err'); }
+  }
+
+  // ── ADD SUB-PROJECT ──────────────────────────────
+  async function submitSub(category, externalId, uid){
+    const input = document.getElementById('subInput_'+uid);
+    const btn   = document.getElementById('subBtn_'+uid);
+    const name  = input.value.trim();
+    if (!name) return;
+    btn.disabled = true; btn.textContent = '...';
+    try {
+      const res = await post({action:'addSubProject', category, externalId, projectName:name});
+      if (!res.success) throw new Error(res.error);
+      toast('เพิ่ม "'+name+'" สำเร็จ','ok');
+      input.value = '';
+      openRow = category + ':' + externalId; // keep expanded after reload
+      await loadAll();
+    } catch(e){ toast(e.message,'err'); }
+    finally { if (btn) { btn.disabled = false; btn.textContent = '＋ เพิ่ม'; } }
+  }
+
+  // ── DELETE CONFIRM ───────────────────────────────
+  function askConfirm(title, msg, cb){
+    document.getElementById('confirmTitle').textContent = title;
+    document.getElementById('confirmMsg').innerHTML     = msg;
+    document.getElementById('overlayConfirm').classList.add('open');
+    document.getElementById('confirmOkBtn').onclick = () => { closeConfirm(); cb(); };
+  }
+  function closeConfirm(){ document.getElementById('overlayConfirm').classList.remove('open'); }
+  function askDelCat(cat){
+    askConfirm('ลบหมวดหมู่', `ลบ <strong style="color:#fff">"${esc(cat)}"</strong> ออกจากเว็บ?<br><span style="color:var(--muted);font-size:12px">(${getVisibleExts(cat).length} externals จะหายไปด้วย)</span>`, ()=>{
+      if (!del.cats.includes(cat)) del.cats.push(cat);
+      saveDel();
+      const visible = categories.filter(c => !isCatDel(c));
+      if (activeTab === cat) { activeTab = visible.find(c => c !== cat) || ''; openRow = null; }
+      render();
+      toast(`ลบ "${cat}" แล้ว`,'ok');
+    });
+  }
+  function askDelExt(cat, id){
+    askConfirm('ลบ External', `ลบ <strong style="color:#fff">"${esc(id)}"</strong> ออกจากเว็บ?`, ()=>{
+      const key = cat+':::'+id;
+      if (!del.exts.includes(key)) del.exts.push(key);
+      saveDel();
+      if (openRow === cat + ':' + id) openRow = null;
+      render();
+      toast(`ลบ "${id}" แล้ว`,'ok');
+    });
+  }
+  function askDelSub(cat, id, sub){
+    askConfirm('ลบ Project', `ลบ <strong style="color:#fff">"${esc(sub)}"</strong> ออกจากเว็บ?`, ()=>{
+      const key = cat+':::'+id+':::'+sub;
+      if (!del.subs.includes(key)) del.subs.push(key);
+      saveDel(); renderTable();
+      toast(`ลบ "${sub}" แล้ว`,'ok');
+    });
+  }
+
+  // ── SETUP ────────────────────────────────────────
+  function openSetup(required=false){
+    document.getElementById('urlInput').value = API;
+    document.getElementById('setupCancelBtn').style.display = required ? 'none' : '';
+    document.getElementById('overlaySetup').classList.add('open');
+  }
+  function closeSetup(){ document.getElementById('overlaySetup').classList.remove('open'); }
+  async function saveUrl(){
+    const u = document.getElementById('urlInput').value.trim();
+    if (!u) { toast('กรุณากรอก URL','err'); return; }
+    API = u; localStorage.setItem(STORE_KEY, u);
+    closeSetup(); await loadAll();
+  }
+
+  // ── UTILS ────────────────────────────────────────
+  function esc(s){ return String(s==null?'':s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+  function showLoader(){
+    document.getElementById('tableWrap').innerHTML = `<div class="center-msg"><div class="spinner"></div><p>กำลังโหลดข้อมูล...</p></div>`;
+    document.getElementById('catList').innerHTML = '';
+    document.getElementById('pageStats').innerHTML = '';
+    document.getElementById('pageTitle').textContent = 'Loading…';
+  }
+  function showErr(msg){
+    document.getElementById('tableWrap').innerHTML = `
+      <div class="center-msg">
+        <div class="ico" style="color:var(--red)">⚠</div>
+        <p>${esc(msg)}</p>
+        <button class="btn btn-ghost" style="margin-top:8px" onclick="openSetup()">ตรวจสอบการตั้งค่า</button>
+      </div>`;
+  }
+  let toastT;
+  function toast(msg, type='ok'){
+    const el = document.getElementById('toast');
+    document.getElementById('toastMsg').textContent = msg;
+    document.getElementById('toastIco').textContent = type === 'ok' ? '✓' : '⚠';
+    el.className = `toast ${type} show`;
+    clearTimeout(toastT);
+    toastT = setTimeout(() => el.classList.remove('show'), 3200);
+  }
+  // Close modals on backdrop click + Esc
+  ['overlaySetup','overlayAdd','overlayCat','overlayConfirm'].forEach(id=>{
+    document.getElementById(id).addEventListener('click', function(e){
+      if (e.target !== this) return;
+      if (id === 'overlaySetup' && !API) return;
+      this.classList.remove('open');
+    });
+  });
+  document.addEventListener('keydown', e=>{
+    if (e.key === 'Escape') {
+      ['overlaySetup','overlayAdd','overlayCat','overlayConfirm'].forEach(id=>{
+        if (id === 'overlaySetup' && !API) return;
+        document.getElementById(id).classList.remove('open');
+      });
+    }
+    if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
+      e.preventDefault();
+      document.getElementById('searchInput').focus();
+    }
+  });
+</script>
+</body>
+</html>
