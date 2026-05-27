@@ -8,634 +8,197 @@
   <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@600;700;800&family=Noto+Sans+Thai:wght@300;400;500;600&display=swap" rel="stylesheet" />
   <style>
     :root {
-      --bg:        #0a0a0a;
-      --s1:        #111111;
-      --s2:        #181818;
-      --s3:        #202020;
-      --border:    #2a2a2a;
-      --border2:   #333;
-      --text:      #e8e8e8;
-      --muted:     #666;
-      --muted2:    #888;
-      --accent:    #5b8def;
-      --accent-bg: rgba(91,141,239,0.1);
-      --accent-bdr:rgba(91,141,239,0.25);
-      --green:     #34d399;
-      --green-bg:  rgba(52,211,153,0.1);
-      --green-bdr: rgba(52,211,153,0.25);
-      --red:       #f87171;
-      --red-bg:    rgba(248,113,113,0.1);
-      --red-bdr:   rgba(248,113,113,0.25);
-      --yellow:    #fbbf24;
-      --yellow-bg: rgba(251,191,36,0.1);
-      --yellow-bdr:rgba(251,191,36,0.2);
+      --bg:#0a0a0a;--s1:#111;--s2:#181818;--s3:#202020;
+      --border:#2a2a2a;--border2:#383838;
+      --text:#e8e8e8;--muted:#666;--muted2:#888;
+      --accent:#5b8def;--accent-bg:rgba(91,141,239,.1);--accent-bdr:rgba(91,141,239,.25);
+      --green:#34d399;--green-bg:rgba(52,211,153,.1);--green-bdr:rgba(52,211,153,.25);
+      --red:#f87171;--red-bg:rgba(248,113,113,.1);--red-bdr:rgba(248,113,113,.25);
+      --yellow:#fbbf24;--yellow-bg:rgba(251,191,36,.1);--yellow-bdr:rgba(251,191,36,.2);
     }
-
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-    body {
-      font-family: 'Noto Sans Thai', 'Syne', sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      min-height: 100vh;
-      overflow-x: hidden;
-    }
-
-    /* ── HEADER ─────────────────────────────── */
-    .header {
-      position: sticky; top: 0; z-index: 100;
-      background: rgba(10,10,10,0.9);
-      backdrop-filter: blur(16px);
-      border-bottom: 1px solid var(--border);
-      padding: 0 24px;
-      height: 60px;
-      display: flex;
-      align-items: center;
-      gap: 20px;
-    }
-
-    .logo {
-      font-family: 'Syne', sans-serif;
-      font-weight: 800;
-      font-size: 17px;
-      letter-spacing: 0.04em;
-      color: var(--text);
-      white-space: nowrap;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .logo-badge {
-      background: var(--accent);
-      color: #fff;
-      font-size: 10px;
-      font-weight: 700;
-      padding: 2px 7px;
-      border-radius: 3px;
-      letter-spacing: 1.5px;
-    }
-
-    .search-wrap {
-      flex: 1;
-      max-width: 420px;
-      position: relative;
-    }
-
-    .search-icon {
-      position: absolute;
-      left: 12px; top: 50%;
-      transform: translateY(-50%);
-      color: var(--muted);
-      font-size: 14px;
-      pointer-events: none;
-    }
-
-    .search-input {
-      width: 100%;
-      background: var(--s2);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 8px 14px 8px 36px;
-      color: var(--text);
-      font-size: 13.5px;
-      font-family: inherit;
-      outline: none;
-      transition: border-color 0.18s;
-    }
-
-    .search-input:focus { border-color: var(--accent); }
-    .search-input::placeholder { color: var(--muted); }
-
-    .header-actions { margin-left: auto; display: flex; gap: 8px; }
-
-    .btn-icon {
-      background: var(--s2);
-      border: 1px solid var(--border);
-      border-radius: 7px;
-      padding: 7px 12px;
-      color: var(--muted2);
-      font-size: 12px;
-      cursor: pointer;
-      transition: all 0.15s;
-      font-family: inherit;
-      white-space: nowrap;
-    }
-
-    .btn-icon:hover { color: var(--text); border-color: var(--border2); }
-
-    /* ── TABS ────────────────────────────────── */
-    .tabs-wrap {
-      display: flex;
-      align-items: stretch;
-      gap: 2px;
-      padding: 0 24px;
-      border-bottom: 1px solid var(--border);
-      background: var(--s1);
-      overflow-x: auto;
-      scrollbar-width: none;
-    }
-    .tabs-wrap::-webkit-scrollbar { display: none; }
-
-    .tab {
-      padding: 12px 18px;
-      font-size: 13px;
-      font-weight: 500;
-      font-family: 'DM Mono', monospace;
-      color: var(--muted);
-      cursor: pointer;
-      border-bottom: 2px solid transparent;
-      transition: all 0.15s;
-      white-space: nowrap;
-      letter-spacing: 0.03em;
-      position: relative;
-    }
-
-    .tab:hover { color: var(--text); }
-
-    .tab.active {
-      color: var(--accent);
-      border-bottom-color: var(--accent);
-    }
-
-    .tab-count {
-      font-size: 10px;
-      background: var(--s3);
-      border-radius: 10px;
-      padding: 1px 6px;
-      margin-left: 6px;
-      color: var(--muted2);
-      font-family: 'DM Mono', monospace;
-    }
-
-    .tab.active .tab-count { background: var(--accent-bg); color: var(--accent); }
-
-    .tab-add-btn {
-      padding: 12px 14px;
-      font-size: 16px;
-      color: var(--muted);
-      cursor: pointer;
-      border: none;
-      background: none;
-      transition: color 0.15s;
-      display: flex;
-      align-items: center;
-    }
-
-    .tab-add-btn:hover { color: var(--accent); }
-
-    /* ── CONTENT ─────────────────────────────── */
-    .content {
-      padding: 24px;
-      max-width: 1440px;
-      margin: 0 auto;
-    }
-
-    /* Stats */
-    .stats-row {
-      display: flex;
-      gap: 10px;
-      margin-bottom: 22px;
-      flex-wrap: wrap;
-    }
-
-    .stat {
-      background: var(--s1);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 9px 14px;
-      font-size: 12.5px;
-      color: var(--muted2);
-      font-family: 'DM Mono', monospace;
-    }
-
-    .stat strong { color: var(--text); font-weight: 500; }
-    .stat.green strong { color: var(--green); }
-    .stat.red strong { color: var(--red); }
-
-    /* Grid */
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-      gap: 14px;
-    }
-
-    /* Card */
-    .card {
-      background: var(--s1);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      overflow: hidden;
-      transition: border-color 0.2s, box-shadow 0.2s;
-      display: flex;
-      flex-direction: column;
-    }
-
-    .card:hover {
-      border-color: var(--border2);
-      box-shadow: 0 4px 24px rgba(0,0,0,0.3);
-    }
-
-    .card-top {
-      padding: 15px 16px 12px;
-      flex: 1;
-    }
-
-    .card-row1 {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 10px;
-    }
-
-    .ext-id {
-      font-family: 'DM Mono', monospace;
-      font-size: 11px;
-      font-weight: 500;
-      letter-spacing: 1.2px;
-      color: var(--accent);
-      background: var(--accent-bg);
-      border: 1px solid var(--accent-bdr);
-      padding: 3px 9px;
-      border-radius: 4px;
-    }
-
-    .chip {
-      font-size: 10.5px;
-      font-weight: 600;
-      padding: 3px 8px;
-      border-radius: 4px;
-      font-family: 'DM Mono', monospace;
-      letter-spacing: 0.5px;
-    }
-
-    .chip-av   { background: var(--green-bg);  color: var(--green);  border: 1px solid var(--green-bdr); }
-    .chip-unav { background: var(--red-bg);    color: var(--red);    border: 1px solid var(--red-bdr);   }
-    .chip-na   { background: var(--s3);        color: var(--muted);  border: 1px solid var(--border);    }
-
-    .card-title {
-      font-family: 'Syne', 'Noto Sans Thai', sans-serif;
-      font-size: 14.5px;
-      font-weight: 700;
-      line-height: 1.45;
-      margin-bottom: 10px;
-      color: var(--text);
-    }
-
-    .card-meta {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin-bottom: 6px;
-    }
-
-    .meta {
-      font-size: 11.5px;
-      color: var(--muted2);
-      font-family: 'DM Mono', monospace;
-      display: flex;
-      align-items: center;
-      gap: 4px;
-    }
-
-    .meta em { font-style: normal; color: var(--text); }
-
-    .remark {
-      font-size: 11px;
-      background: var(--yellow-bg);
-      color: var(--yellow);
-      border: 1px solid var(--yellow-bdr);
-      border-radius: 4px;
-      padding: 4px 9px;
-      margin-top: 6px;
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-    }
-
-    /* Sub-projects */
-    .sub-toggle {
-      width: 100%;
-      background: var(--s2);
-      border: none;
-      border-top: 1px solid var(--border);
-      color: var(--muted2);
-      font-size: 11.5px;
-      font-family: 'DM Mono', monospace;
-      padding: 9px 16px;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      transition: color 0.15s, background 0.15s;
-      letter-spacing: 0.02em;
-    }
-
-    .sub-toggle:hover { color: var(--text); background: var(--s3); }
-
-    .sub-arrow {
-      font-size: 10px;
-      transition: transform 0.2s;
-    }
-
-    .sub-toggle.open .sub-arrow { transform: rotate(180deg); }
-
-    .sub-list {
-      display: none;
-      background: var(--s2);
-      border-top: 1px solid var(--border);
-      padding: 6px 0 10px;
-    }
-
-    .sub-list.open { display: block; }
-
-    .sub-item {
-      font-size: 12.5px;
-      color: var(--muted2);
-      padding: 5px 16px;
-      display: flex;
-      align-items: center;
-      gap: 9px;
-      transition: background 0.1s;
-    }
-
-    .sub-item:hover { background: var(--s3); color: var(--text); }
-
-    .sub-dot {
-      width: 3px; height: 3px;
-      border-radius: 50%;
-      background: var(--muted);
-      flex-shrink: 0;
-    }
-
-    /* Empty / Loading */
-    .center-msg {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 14px;
-      padding: 80px 20px;
-      color: var(--muted2);
-      text-align: center;
-    }
-
-    .center-msg .ico { font-size: 40px; }
-    .center-msg p { font-size: 14px; line-height: 1.6; }
-
-    .spinner {
-      width: 28px; height: 28px;
-      border: 2.5px solid var(--border2);
-      border-top-color: var(--accent);
-      border-radius: 50%;
-      animation: spin 0.75s linear infinite;
-    }
-
-    @keyframes spin { to { transform: rotate(360deg); } }
-
-    /* ── FAB ─────────────────────────────────── */
-    .fab {
-      position: fixed;
-      bottom: 30px; right: 30px;
-      width: 52px; height: 52px;
-      border-radius: 50%;
-      background: var(--accent);
-      color: #fff;
-      font-size: 22px;
-      border: none;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 4px 20px rgba(91,141,239,0.45);
-      transition: transform 0.18s, box-shadow 0.18s;
-      z-index: 200;
-    }
-
-    .fab:hover {
-      transform: scale(1.07);
-      box-shadow: 0 6px 28px rgba(91,141,239,0.55);
-    }
-
-    /* ── MODAL ───────────────────────────────── */
-    .overlay {
-      display: none;
-      position: fixed; inset: 0;
-      background: rgba(0,0,0,0.75);
-      z-index: 300;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
-    }
-    .overlay.open { display: flex; }
-
-    .modal {
-      background: var(--s1);
-      border: 1px solid var(--border2);
-      border-radius: 16px;
-      padding: 26px;
-      width: 100%;
-      max-height: 88vh;
-      overflow-y: auto;
-    }
-
-    .modal-sm { max-width: 380px; }
-    .modal-md { max-width: 520px; }
-    .modal-lg { max-width: 560px; }
-
-    .modal h2 {
-      font-family: 'Syne', sans-serif;
-      font-size: 18px;
-      font-weight: 700;
-      margin-bottom: 22px;
-      letter-spacing: 0.02em;
-    }
-
-    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-
-    .form-group { margin-bottom: 16px; }
-
-    .form-label {
-      display: block;
-      font-size: 11.5px;
-      font-family: 'DM Mono', monospace;
-      color: var(--muted2);
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      margin-bottom: 7px;
-    }
-
-    .form-input,
-    .form-select,
-    .form-textarea {
-      width: 100%;
-      background: var(--s2);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 10px 13px;
-      color: var(--text);
-      font-size: 13.5px;
-      font-family: inherit;
-      outline: none;
-      transition: border-color 0.18s;
-    }
-
-    .form-input:focus, .form-select:focus, .form-textarea:focus {
-      border-color: var(--accent);
-    }
-
-    .form-select option { background: var(--s2); }
-
-    .form-textarea { resize: vertical; min-height: 88px; line-height: 1.6; }
-
-    .form-hint {
-      font-size: 11px;
-      color: var(--muted);
-      margin-top: 5px;
-      font-family: 'DM Mono', monospace;
-    }
-
-    .modal-footer {
-      display: flex;
-      gap: 10px;
-      justify-content: flex-end;
-      margin-top: 26px;
-    }
-
-    .btn {
-      padding: 9px 22px;
-      border-radius: 8px;
-      font-size: 13.5px;
-      font-weight: 500;
-      font-family: inherit;
-      cursor: pointer;
-      border: none;
-      transition: all 0.15s;
-    }
-
-    .btn-primary { background: var(--accent); color: #fff; }
-    .btn-primary:hover { opacity: 0.88; }
-    .btn-primary:disabled { opacity: 0.45; cursor: not-allowed; }
-    .btn-ghost { background: transparent; color: var(--muted2); border: 1px solid var(--border); }
-    .btn-ghost:hover { color: var(--text); border-color: var(--border2); }
-
-    /* Setup info box */
-    .info-box {
-      background: var(--s2);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 15px 16px;
-      margin-bottom: 20px;
-      font-size: 13px;
-      color: var(--muted2);
-      line-height: 1.85;
-    }
-
-    .info-box strong { color: var(--text); font-weight: 600; }
-    .info-box code {
-      background: var(--s3);
-      color: var(--accent);
-      padding: 1px 6px;
-      border-radius: 3px;
-      font-family: 'DM Mono', monospace;
-      font-size: 11.5px;
-    }
-
-    .step-num {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      width: 18px; height: 18px;
-      background: var(--accent-bg);
-      border: 1px solid var(--accent-bdr);
-      color: var(--accent);
-      border-radius: 50%;
-      font-size: 10px;
-      font-family: 'DM Mono', monospace;
-      font-weight: 500;
-      margin-right: 6px;
-      flex-shrink: 0;
-    }
-
-    .step { display: flex; align-items: flex-start; margin-bottom: 6px; }
-
-    /* Toast */
-    .toast {
-      position: fixed;
-      bottom: 94px; right: 30px;
-      background: var(--s2);
-      border: 1px solid var(--border2);
-      border-radius: 10px;
-      padding: 12px 18px;
-      font-size: 13px;
-      z-index: 500;
-      opacity: 0;
-      transform: translateY(12px);
-      transition: all 0.25s;
-      pointer-events: none;
-      max-width: 280px;
-    }
-
-    .toast.show { opacity: 1; transform: translateY(0); }
-    .toast.ok  { border-color: var(--green-bdr); color: var(--green); }
-    .toast.err { border-color: var(--red-bdr);   color: var(--red);   }
-
-    /* Responsive */
-    @media (max-width: 640px) {
-      .header { padding: 0 16px; gap: 12px; }
-      .content { padding: 16px; }
-      .form-row { grid-template-columns: 1fr; }
-      .grid { grid-template-columns: 1fr; }
-      .fab { bottom: 20px; right: 20px; }
-    }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:'Noto Sans Thai','Syne',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+
+    /* HEADER */
+    .header{position:sticky;top:0;z-index:100;background:rgba(10,10,10,.92);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);padding:0 24px;height:60px;display:flex;align-items:center;gap:20px}
+    .logo{font-family:'Syne',sans-serif;font-weight:800;font-size:17px;letter-spacing:.04em;display:flex;align-items:center;gap:10px;white-space:nowrap}
+    .logo-badge{background:var(--accent);color:#fff;font-size:10px;font-weight:700;padding:2px 7px;border-radius:3px;letter-spacing:1.5px}
+    .search-wrap{flex:1;max-width:420px;position:relative}
+    .search-icon{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:14px;pointer-events:none}
+    .search-input{width:100%;background:var(--s2);border:1px solid var(--border);border-radius:8px;padding:8px 14px 8px 36px;color:var(--text);font-size:13.5px;font-family:inherit;outline:none;transition:border-color .18s}
+    .search-input:focus{border-color:var(--accent)}
+    .search-input::placeholder{color:var(--muted)}
+    .header-actions{margin-left:auto;display:flex;gap:8px;align-items:center}
+    .btn-icon{background:var(--s2);border:1px solid var(--border);border-radius:7px;padding:7px 12px;color:var(--muted2);font-size:12px;cursor:pointer;transition:all .15s;font-family:inherit;white-space:nowrap}
+    .btn-icon:hover{color:var(--text);border-color:var(--border2)}
+    .btn-icon.danger:hover{color:var(--red);border-color:var(--red-bdr);background:var(--red-bg)}
+
+    /* TABS */
+    .tabs-wrap{display:flex;align-items:stretch;gap:2px;padding:0 24px;border-bottom:1px solid var(--border);background:var(--s1);overflow-x:auto;scrollbar-width:none}
+    .tabs-wrap::-webkit-scrollbar{display:none}
+    .tab{padding:12px 16px;font-size:13px;font-weight:500;font-family:'DM Mono',monospace;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;transition:all .15s;white-space:nowrap;letter-spacing:.03em;display:flex;align-items:center;gap:6px}
+    .tab:hover{color:var(--text)}
+    .tab.active{color:var(--accent);border-bottom-color:var(--accent)}
+    .tab-count{font-size:10px;background:var(--s3);border-radius:10px;padding:1px 6px;color:var(--muted2);font-family:'DM Mono',monospace}
+    .tab.active .tab-count{background:var(--accent-bg);color:var(--accent)}
+    .tab-del{font-size:10px;color:var(--muted);background:none;border:none;cursor:pointer;padding:1px 3px;border-radius:3px;opacity:0;transition:all .15s;line-height:1}
+    .tab:hover .tab-del{opacity:1}
+    .tab-del:hover{color:var(--red)!important;background:var(--red-bg)}
+    .tab-add-btn{padding:12px 14px;font-size:16px;color:var(--muted);cursor:pointer;border:none;background:none;transition:color .15s;display:flex;align-items:center}
+    .tab-add-btn:hover{color:var(--accent)}
+
+    /* CONTENT */
+    .content{padding:24px;max-width:1440px;margin:0 auto}
+    .stats-row{display:flex;gap:10px;margin-bottom:22px;flex-wrap:wrap}
+    .stat{background:var(--s1);border:1px solid var(--border);border-radius:8px;padding:9px 14px;font-size:12.5px;color:var(--muted2);font-family:'DM Mono',monospace}
+    .stat strong{color:var(--text);font-weight:500}
+    .stat.green strong{color:var(--green)}
+    .stat.red strong{color:var(--red)}
+    .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px}
+
+    /* CARD */
+    .card{background:var(--s1);border:1px solid var(--border);border-radius:12px;overflow:hidden;transition:border-color .2s,box-shadow .2s;display:flex;flex-direction:column}
+    .card:hover{border-color:var(--border2);box-shadow:0 4px 24px rgba(0,0,0,.3)}
+    .card-top{padding:15px 16px 12px;flex:1}
+    .card-row1{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+    .ext-id{font-family:'DM Mono',monospace;font-size:11px;font-weight:500;letter-spacing:1.2px;color:var(--accent);background:var(--accent-bg);border:1px solid var(--accent-bdr);padding:3px 9px;border-radius:4px}
+    .chip{font-size:10.5px;font-weight:600;padding:3px 8px;border-radius:4px;font-family:'DM Mono',monospace;letter-spacing:.5px}
+    .chip-av{background:var(--green-bg);color:var(--green);border:1px solid var(--green-bdr)}
+    .chip-unav{background:var(--red-bg);color:var(--red);border:1px solid var(--red-bdr)}
+    .chip-na{background:var(--s3);color:var(--muted);border:1px solid var(--border)}
+    .card-del-btn{margin-left:auto;background:none;border:none;color:var(--muted);cursor:pointer;padding:4px 6px;border-radius:5px;font-size:13px;transition:all .15s;opacity:0}
+    .card:hover .card-del-btn{opacity:1}
+    .card-del-btn:hover{color:var(--red);background:var(--red-bg)}
+    .card-title{font-family:'Syne','Noto Sans Thai',sans-serif;font-size:14.5px;font-weight:700;line-height:1.45;margin-bottom:10px;color:var(--text)}
+    .card-meta{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:6px}
+    .meta{font-size:11.5px;color:var(--muted2);font-family:'DM Mono',monospace;display:flex;align-items:center;gap:4px}
+    .meta em{font-style:normal;color:var(--text)}
+    .remark{font-size:11px;background:var(--yellow-bg);color:var(--yellow);border:1px solid var(--yellow-bdr);border-radius:4px;padding:4px 9px;margin-top:6px;display:inline-flex;align-items:center;gap:5px}
+
+    /* PROGRESS BAR */
+    .progress-wrap{padding:12px 16px;border-top:1px solid var(--border);background:var(--s2)}
+    .progress-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:7px}
+    .progress-label{font-size:11px;color:var(--muted2);font-family:'DM Mono',monospace}
+    .progress-pct{font-size:11px;font-family:'DM Mono',monospace;font-weight:500}
+    .pct-low{color:var(--green)}.pct-mid{color:var(--yellow)}.pct-high{color:var(--red)}
+    .progress-bar-bg{width:100%;height:5px;background:var(--s3);border-radius:99px;overflow:hidden}
+    .progress-bar-fill{height:100%;border-radius:99px;transition:width .4s ease}
+    .fill-low{background:var(--green)}.fill-mid{background:var(--yellow)}.fill-high{background:var(--red)}
+    .progress-detail{font-size:10.5px;color:var(--muted);font-family:'DM Mono',monospace;margin-top:5px}
+
+    /* SUB-PROJECTS */
+    .sub-toggle{width:100%;background:var(--s2);border:none;border-top:1px solid var(--border);color:var(--muted2);font-size:11.5px;font-family:'DM Mono',monospace;padding:9px 16px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;transition:color .15s,background .15s}
+    .sub-toggle:hover{color:var(--text);background:var(--s3)}
+    .sub-arrow{font-size:10px;transition:transform .2s}
+    .sub-toggle.open .sub-arrow{transform:rotate(180deg)}
+    .sub-list{display:none;background:var(--s2);border-top:1px solid var(--border)}
+    .sub-list.open{display:block}
+    .sub-item{font-size:12.5px;color:var(--muted2);padding:5px 16px;display:flex;align-items:center;gap:9px;transition:background .1s}
+    .sub-item:hover{background:var(--s3);color:var(--text)}
+    .sub-item:hover .sub-del{opacity:1}
+    .sub-dot{width:3px;height:3px;border-radius:50%;background:var(--muted);flex-shrink:0}
+    .sub-name{flex:1}
+    .sub-del{background:none;border:none;color:var(--muted);cursor:pointer;padding:2px 5px;border-radius:3px;font-size:11px;opacity:0;transition:all .15s;line-height:1}
+    .sub-del:hover{color:var(--red);background:var(--red-bg)}
+
+    /* ADD SUB-PROJECT */
+    .add-sub-wrap{padding:8px 16px 12px;background:var(--s2);border-top:1px solid var(--border)}
+    .add-sub-row{display:flex;gap:8px}
+    .add-sub-input{flex:1;background:var(--s3);border:1px solid var(--border);border-radius:6px;padding:7px 10px;color:var(--text);font-size:12.5px;font-family:inherit;outline:none;transition:border-color .15s}
+    .add-sub-input:focus{border-color:var(--accent)}
+    .add-sub-input::placeholder{color:var(--muted)}
+    .add-sub-btn{background:var(--accent);border:none;border-radius:6px;padding:7px 12px;color:#fff;font-size:12px;cursor:pointer;font-family:inherit;transition:opacity .15s;white-space:nowrap}
+    .add-sub-btn:hover{opacity:.88}
+    .add-sub-btn:disabled{opacity:.45;cursor:not-allowed}
+
+    /* EMPTY / LOADING */
+    .center-msg{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:80px 20px;color:var(--muted2);text-align:center}
+    .center-msg .ico{font-size:40px}
+    .center-msg p{font-size:14px;line-height:1.6}
+    .spinner{width:28px;height:28px;border:2.5px solid var(--border2);border-top-color:var(--accent);border-radius:50%;animation:spin .75s linear infinite}
+    @keyframes spin{to{transform:rotate(360deg)}}
+
+    /* FAB */
+    .fab{position:fixed;bottom:30px;right:30px;width:52px;height:52px;border-radius:50%;background:var(--accent);color:#fff;font-size:22px;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 20px rgba(91,141,239,.45);transition:transform .18s,box-shadow .18s;z-index:200}
+    .fab:hover{transform:scale(1.07);box-shadow:0 6px 28px rgba(91,141,239,.55)}
+
+    /* MODAL */
+    .overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:300;align-items:center;justify-content:center;padding:20px}
+    .overlay.open{display:flex}
+    .modal{background:var(--s1);border:1px solid var(--border2);border-radius:16px;padding:26px;width:100%;max-height:88vh;overflow-y:auto}
+    .modal-sm{max-width:380px}.modal-md{max-width:520px}.modal-lg{max-width:560px}
+    .modal h2{font-family:'Syne',sans-serif;font-size:18px;font-weight:700;margin-bottom:22px;letter-spacing:.02em}
+    .form-row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+    .form-group{margin-bottom:16px}
+    .form-label{display:block;font-size:11.5px;font-family:'DM Mono',monospace;color:var(--muted2);letter-spacing:.08em;text-transform:uppercase;margin-bottom:7px}
+    .form-input,.form-select,.form-textarea{width:100%;background:var(--s2);border:1px solid var(--border);border-radius:8px;padding:10px 13px;color:var(--text);font-size:13.5px;font-family:inherit;outline:none;transition:border-color .18s}
+    .form-input:focus,.form-select:focus,.form-textarea:focus{border-color:var(--accent)}
+    .form-select option{background:var(--s2)}
+    .form-textarea{resize:vertical;min-height:88px;line-height:1.6}
+    .form-hint{font-size:11px;color:var(--muted);margin-top:5px;font-family:'DM Mono',monospace}
+    .modal-footer{display:flex;gap:10px;justify-content:flex-end;margin-top:26px}
+    .btn{padding:9px 22px;border-radius:8px;font-size:13.5px;font-weight:500;font-family:inherit;cursor:pointer;border:none;transition:all .15s}
+    .btn-primary{background:var(--accent);color:#fff}.btn-primary:hover{opacity:.88}.btn-primary:disabled{opacity:.45;cursor:not-allowed}
+    .btn-ghost{background:transparent;color:var(--muted2);border:1px solid var(--border)}.btn-ghost:hover{color:var(--text);border-color:var(--border2)}
+    .btn-danger{background:var(--red-bg);color:var(--red);border:1px solid var(--red-bdr)}.btn-danger:hover{background:var(--red);color:#fff}
+
+    /* CONFIRM MODAL */
+    .confirm-msg{font-size:13.5px;color:var(--muted2);line-height:1.6;margin-bottom:8px}
+    .confirm-note{font-size:12px;color:var(--muted);background:var(--s2);border:1px solid var(--border);border-radius:6px;padding:8px 12px;margin-bottom:4px}
+
+    /* SETUP INFO */
+    .info-box{background:var(--s2);border:1px solid var(--border);border-radius:10px;padding:15px 16px;margin-bottom:20px;font-size:13px;color:var(--muted2);line-height:1.85}
+    .info-box strong{color:var(--text);font-weight:600}
+    .info-box code{background:var(--s3);color:var(--accent);padding:1px 6px;border-radius:3px;font-family:'DM Mono',monospace;font-size:11.5px}
+    .step{display:flex;align-items:flex-start;margin-bottom:6px}
+    .step-num{display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;background:var(--accent-bg);border:1px solid var(--accent-bdr);color:var(--accent);border-radius:50%;font-size:10px;font-family:'DM Mono',monospace;font-weight:500;margin-right:6px;flex-shrink:0}
+
+    /* TOAST */
+    .toast{position:fixed;bottom:94px;right:30px;background:var(--s2);border:1px solid var(--border2);border-radius:10px;padding:12px 18px;font-size:13px;z-index:500;opacity:0;transform:translateY(12px);transition:all .25s;pointer-events:none;max-width:280px}
+    .toast.show{opacity:1;transform:translateY(0)}
+    .toast.ok{border-color:var(--green-bdr);color:var(--green)}
+    .toast.err{border-color:var(--red-bdr);color:var(--red)}
+
+    @media(max-width:640px){.header{padding:0 16px;gap:12px}.content{padding:16px}.form-row{grid-template-columns:1fr}.grid{grid-template-columns:1fr}.fab{bottom:20px;right:20px}}
   </style>
 </head>
 <body>
 
-<!-- ── HEADER ── -->
 <header class="header">
-  <div class="logo">
-    <span>ASK</span>
-    <span class="logo-badge">EXT</span>
-  </div>
+  <div class="logo"><span>ASK</span><span class="logo-badge">EXT</span></div>
   <div class="search-wrap">
     <span class="search-icon">⌕</span>
-    <input class="search-input" id="searchInput" type="text"
-      placeholder="ค้นหา External ID หรือ Project..." oninput="onSearch(this.value)" />
+    <input class="search-input" id="searchInput" type="text" placeholder="ค้นหา External ID หรือ Project..." oninput="onSearch(this.value)" />
   </div>
   <div class="header-actions">
     <button class="btn-icon" onclick="openSetup()">⚙ ตั้งค่า</button>
   </div>
 </header>
 
-<!-- ── TABS ── -->
-<nav class="tabs-wrap" id="tabsBar">
-  <div class="center-msg" style="padding:10px 0;flex-direction:row;gap:10px;">
-    <div class="spinner" style="width:14px;height:14px;border-width:2px;"></div>
-    <span style="font-size:13px;">กำลังโหลด...</span>
-  </div>
-</nav>
+<nav class="tabs-wrap" id="tabsBar"></nav>
 
-<!-- ── MAIN ── -->
 <main class="content">
   <div id="statsRow" class="stats-row" style="display:none;"></div>
-  <div id="mainContent">
-    <div class="center-msg">
-      <div class="spinner"></div>
-      <p>กำลังโหลดข้อมูล...</p>
-    </div>
-  </div>
+  <div id="mainContent"><div class="center-msg"><div class="spinner"></div><p>กำลังโหลดข้อมูล...</p></div></div>
 </main>
 
-<!-- ── FAB ── -->
 <button class="fab" onclick="openAdd()" title="เพิ่ม External ใหม่">+</button>
-
-<!-- ── TOAST ── -->
 <div class="toast" id="toast"></div>
 
-<!-- ─────────────── MODALS ─────────────── -->
+<!-- Confirm Modal -->
+<div class="overlay" id="overlayConfirm">
+  <div class="modal modal-sm">
+    <h2 id="confirmTitle">ยืนยันการลบ</h2>
+    <p class="confirm-msg" id="confirmMsg"></p>
+    <p class="confirm-note">⚠ ข้อมูลจะหายในเว็บเท่านั้น ไม่กระทบ Google Sheets</p>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeConfirm()">ยกเลิก</button>
+      <button class="btn btn-danger" id="confirmOkBtn">ลบ</button>
+    </div>
+  </div>
+</div>
 
-<!-- Setup -->
+<!-- Setup Modal -->
 <div class="overlay" id="overlaySetup">
   <div class="modal modal-lg">
     <h2>⚙ ตั้งค่าการเชื่อมต่อ</h2>
@@ -644,12 +207,11 @@
       <div class="step"><span class="step-num">2</span>วางโค้ดจากไฟล์ <code>Code.gs</code> ทับทั้งหมด แล้วกด Save</div>
       <div class="step"><span class="step-num">3</span>กด <code>Deploy</code> → <code>New deployment</code> → Type: <code>Web app</code></div>
       <div class="step"><span class="step-num">4</span>ตั้ง <strong>Execute as: Me</strong> / <strong>Who has access: Anyone</strong></div>
-      <div class="step"><span class="step-num">5</span>Copy URL ที่ได้ มาวางด้านล่าง</div>
+      <div class="step"><span class="step-num">5</span>Copy URL มาวางด้านล่าง</div>
     </div>
     <div class="form-group">
       <label class="form-label">Apps Script Web App URL</label>
-      <input class="form-input" id="urlInput" type="text"
-        placeholder="https://script.google.com/macros/s/..." />
+      <input class="form-input" id="urlInput" type="text" placeholder="https://script.google.com/macros/s/..." />
     </div>
     <div class="modal-footer">
       <button class="btn btn-ghost" id="setupCancelBtn" onclick="closeSetup()">ยกเลิก</button>
@@ -658,7 +220,7 @@
   </div>
 </div>
 
-<!-- Add External -->
+<!-- Add External Modal -->
 <div class="overlay" id="overlayAdd">
   <div class="modal modal-lg">
     <h2>+ เพิ่ม External ใหม่</h2>
@@ -678,9 +240,16 @@
     </div>
     <div class="form-row">
       <div class="form-group">
-        <label class="form-label">ขนาด (Spaces)</label>
-        <input class="form-input" id="addSize" placeholder="เช่น 512 GB" />
+        <label class="form-label">ข้อมูลที่ใช้อยู่ (Used)</label>
+        <input class="form-input" id="addSize" placeholder="เช่น 280.64 GB หรือ 1.2 TB" />
       </div>
+      <div class="form-group">
+        <label class="form-label">ความจุรวม (Total)</label>
+        <input class="form-input" id="addTotal" placeholder="เช่น 2 TB หรือ 512 GB" />
+        <p class="form-hint">ใส่เพื่อแสดง Progress Bar</p>
+      </div>
+    </div>
+    <div class="form-row">
       <div class="form-group">
         <label class="form-label">Storage Availability</label>
         <select class="form-select" id="addStorAvail">
@@ -688,8 +257,6 @@
           <option value="Unavailable">Unavailable</option>
         </select>
       </div>
-    </div>
-    <div class="form-row">
       <div class="form-group">
         <label class="form-label">Status</label>
         <select class="form-select" id="addStatus">
@@ -697,16 +264,14 @@
           <option value="Unavailable">Unavailable</option>
         </select>
       </div>
-      <div class="form-group">
-        <label class="form-label">Remark</label>
-        <input class="form-input" id="addRemark" placeholder="หมายเหตุ (ถ้ามี)" />
-      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Remark</label>
+      <input class="form-input" id="addRemark" placeholder="หมายเหตุ (ถ้ามี)" />
     </div>
     <div class="form-group">
       <label class="form-label">Sub-projects</label>
-      <textarea class="form-textarea" id="addSubs"
-        placeholder="ใส่ Project ย่อย 1 บรรทัด = 1 Project"></textarea>
-      <p class="form-hint">ขึ้นบรรทัดใหม่สำหรับแต่ละ Sub-project</p>
+      <textarea class="form-textarea" id="addSubs" placeholder="ใส่ Project ย่อย 1 บรรทัด = 1 Project"></textarea>
     </div>
     <div class="modal-footer">
       <button class="btn btn-ghost" onclick="closeAdd()">ยกเลิก</button>
@@ -715,7 +280,7 @@
   </div>
 </div>
 
-<!-- Add Category -->
+<!-- Add Category Modal -->
 <div class="overlay" id="overlayCat">
   <div class="modal modal-sm">
     <h2>＋ หมวดหมู่ใหม่</h2>
@@ -731,265 +296,318 @@
   </div>
 </div>
 
-<!-- ─────────────── SCRIPT ─────────────── -->
 <script>
   const STORE_KEY = 'ask_ext_v1_url';
+  const DEL_KEY   = 'ask_ext_v1_del';
+
   let API = localStorage.getItem(STORE_KEY) || '';
-  let allData = {};
-  let categories = [];
-  let activeTab = '';
-  let query = '';
+  let allData = {}, categories = [], activeTab = '', query = '';
 
-  // ── INIT ──────────────────────────────
-  window.onload = () => {
-    if (!API) { openSetup(true); return; }
-    loadAll();
-  };
+  // Deletion state — stored in localStorage, never touches Sheets
+  let del = JSON.parse(localStorage.getItem(DEL_KEY) || '{"cats":[],"exts":[],"subs":[]}');
 
-  // ── API ───────────────────────────────
+  function saveDel() { localStorage.setItem(DEL_KEY, JSON.stringify(del)); }
+  function isCatDel(cat)          { return del.cats.includes(cat); }
+  function isExtDel(cat, id)      { return del.exts.includes(cat+':::'+id); }
+  function isSubDel(cat, id, sub) { return del.subs.includes(cat+':::'+id+':::'+sub); }
+
+  // ── INIT ──
+  window.onload = () => { if (!API) { openSetup(true); } else { loadAll(); } };
+
+  // ── API ──
   async function get(params) {
     const u = new URL(API);
-    for (const [k, v] of Object.entries(params)) u.searchParams.set(k, v);
-    const r = await fetch(u.toString());
-    return r.json();
+    for (const [k,v] of Object.entries(params)) u.searchParams.set(k,v);
+    return (await fetch(u.toString())).json();
   }
-
   async function post(body) {
-    const r = await fetch(API, {
-      method: 'POST',
-      body: JSON.stringify(body)
-    });
-    return r.json();
+    return (await fetch(API,{method:'POST',body:JSON.stringify(body)})).json();
   }
 
   async function loadAll() {
     showLoader();
     try {
-      const res = await get({ action: 'getAllData' });
+      const res = await get({action:'getAllData'});
       if (!res.success) throw new Error(res.error);
       categories = res.categories;
-      allData = res.data;
-      activeTab = categories[0] || '';
-      renderTabs();
-      renderContent();
-    } catch (e) {
-      showErr('โหลดข้อมูลไม่สำเร็จ: ' + e.message);
-    }
+      allData    = res.data;
+      // Set activeTab to first non-deleted category
+      const visible = categories.filter(c => !isCatDel(c));
+      if (!activeTab || isCatDel(activeTab)) activeTab = visible[0] || '';
+      renderTabs(); renderContent();
+    } catch(e) { showErr('โหลดข้อมูลไม่สำเร็จ: '+e.message); }
   }
 
-  // ── RENDER ────────────────────────────
+  // ── RENDER ──
   function renderTabs() {
+    const visible = categories.filter(c => !isCatDel(c));
     document.getElementById('tabsBar').innerHTML =
-      categories.map(c => {
-        const cnt = (allData[c] || []).length;
-        return `<div class="tab ${c === activeTab ? 'active' : ''}" onclick="switchTab('${c}')">
-          ${c}<span class="tab-count">${cnt}</span>
-        </div>`;
-      }).join('') +
+      visible.map(c => `
+        <div class="tab ${c===activeTab?'active':''}" onclick="switchTab('${c}')">
+          ${c}
+          <span class="tab-count">${getVisibleExts(c).length}</span>
+          <button class="tab-del" onclick="event.stopPropagation();askDelCat('${c}')" title="ลบหมวดหมู่">✕</button>
+        </div>`).join('') +
       `<button class="tab-add-btn" onclick="openCat()" title="เพิ่มหมวดหมู่">＋</button>`;
   }
 
-  function switchTab(cat) {
-    activeTab = cat;
-    query = '';
-    document.getElementById('searchInput').value = '';
-    renderTabs();
-    renderContent();
+  function getVisibleExts(cat) {
+    return (allData[cat] || []).filter(e => !isExtDel(cat, e.id));
   }
+
+  function switchTab(cat) { activeTab=cat; query=''; document.getElementById('searchInput').value=''; renderTabs(); renderContent(); }
 
   function renderContent() {
     const filtered = getFiltered();
-    const all = allData[activeTab] || [];
+    const all = getVisibleExts(activeTab);
+    const avail = all.filter(e => e.storageAvailability==='Available').length;
 
-    // Stats
-    const avail = all.filter(e => e.storageAvailability === 'Available').length;
     const statsRow = document.getElementById('statsRow');
     statsRow.style.display = 'flex';
     statsRow.innerHTML = `
       <div class="stat">External: <strong>${all.length}</strong></div>
       <div class="stat green">Storage Available: <strong>${avail}</strong></div>
       <div class="stat red">Unavailable: <strong>${all.length - avail}</strong></div>
-      ${query ? `<div class="stat">ค้นหา: <strong>${filtered.length} ผล</strong></div>` : ''}
-    `;
+      ${query?`<div class="stat">ค้นหา: <strong>${filtered.length} ผล</strong></div>`:''}`;
 
     const main = document.getElementById('mainContent');
     if (!filtered.length) {
-      main.innerHTML = `<div class="center-msg">
-        <div class="ico">${query ? '🔍' : '📦'}</div>
-        <p>${query ? `ไม่พบ "${query}"` : 'ยังไม่มี External ในหมวดนี้'}</p>
-      </div>`;
+      main.innerHTML = `<div class="center-msg"><div class="ico">${query?'🔍':'📦'}</div><p>${query?`ไม่พบ "${query}"`:'ยังไม่มี External ในหมวดนี้'}</p></div>`;
       return;
     }
-
     main.innerHTML = `<div class="grid">${filtered.map(cardHTML).join('')}</div>`;
   }
 
+  // ── PARSE SIZE ──
+  function parseGB(str) {
+    if (!str) return null;
+    const s = str.toString().toUpperCase().trim();
+    const n = parseFloat(s);
+    if (isNaN(n)) return null;
+    if (s.includes('TB')) return n * 1024;
+    if (s.includes('MB')) return n / 1024;
+    return n;
+  }
+
+  function progressHTML(e) {
+    const used  = parseGB(e.size);
+    const total = parseGB(e.totalCapacity);
+    if (!used || !total || total <= 0) return '';
+    const pct = Math.min(100, Math.round((used/total)*100));
+    const cls  = pct < 60 ? 'low' : pct < 80 ? 'mid' : 'high';
+    return `<div class="progress-wrap">
+      <div class="progress-header">
+        <span class="progress-label">Storage Usage</span>
+        <span class="progress-pct pct-${cls}">${pct}%</span>
+      </div>
+      <div class="progress-bar-bg"><div class="progress-bar-fill fill-${cls}" style="width:${pct}%"></div></div>
+      <div class="progress-detail">${e.size} / ${e.totalCapacity}</div>
+    </div>`;
+  }
+
   function cardHTML(e) {
-    const avClass = e.storageAvailability === 'Available' ? 'chip-av'
-                  : e.storageAvailability === 'Unavailable' ? 'chip-unav' : 'chip-na';
-    const hasSub = e.subProjects && e.subProjects.length > 0;
-    const uid = 'sub_' + e.id.replace(/\W/g, '');
-    return `
-      <div class="card">
-        <div class="card-top">
-          <div class="card-row1">
-            <span class="ext-id">${e.id}</span>
-            <span class="chip ${avClass}">${e.storageAvailability || 'N/A'}</span>
-          </div>
-          <div class="card-title">${e.mainProject}</div>
-          <div class="card-meta">
-            ${e.size ? `<span class="meta">💾 <em>${e.size}</em></span>` : ''}
-            ${e.status ? `<span class="meta">◉ <em>${e.status}</em></span>` : ''}
-          </div>
-          ${e.remark ? `<div class="remark">⚠ ${e.remark}</div>` : ''}
+    const avClass = e.storageAvailability==='Available'?'chip-av':e.storageAvailability==='Unavailable'?'chip-unav':'chip-na';
+    const uid     = 'sub_'+e.id.replace(/\W/g,'')+'_'+e.category;
+    const visibleSubs = (e.subProjects||[]).filter(s => !isSubDel(e.category, e.id, s));
+    const hasSub  = visibleSubs.length > 0;
+
+    return `<div class="card">
+      <div class="card-top">
+        <div class="card-row1">
+          <span class="ext-id">${e.id}</span>
+          <span class="chip ${avClass}">${e.storageAvailability||'N/A'}</span>
+          <button class="card-del-btn" onclick="askDelExt('${e.category}','${e.id}')" title="ลบ External นี้">🗑</button>
         </div>
-        ${hasSub ? `
-          <button class="sub-toggle" id="tog_${uid}" onclick="toggleSub('${uid}')">
-            <span>📁 ${e.subProjects.length} sub-projects</span>
-            <span class="sub-arrow">▾</span>
-          </button>
-          <div class="sub-list" id="${uid}">
-            ${e.subProjects.map(s => `<div class="sub-item"><span class="sub-dot"></span>${s}</div>`).join('')}
+        <div class="card-title">${e.mainProject||'—'}</div>
+        <div class="card-meta">
+          ${e.size?`<span class="meta">💾 <em>${e.size}</em></span>`:''}
+          ${e.status?`<span class="meta">◉ <em>${e.status}</em></span>`:''}
+        </div>
+        ${e.remark?`<div class="remark">⚠ ${e.remark}</div>`:''}
+      </div>
+      ${progressHTML(e)}
+      <button class="sub-toggle" id="tog_${uid}" onclick="toggleSub('${uid}')">
+        <span>📁 ${visibleSubs.length} sub-projects</span>
+        <span class="sub-arrow">▾</span>
+      </button>
+      <div class="sub-list" id="${uid}">
+        ${visibleSubs.map(s=>`
+          <div class="sub-item">
+            <span class="sub-dot"></span>
+            <span class="sub-name">${s}</span>
+            <button class="sub-del" onclick="askDelSub('${e.category}','${e.id}','${s.replace(/'/g,"\\'")}')">✕</button>
+          </div>`).join('')}
+        <div class="add-sub-wrap">
+          <div class="add-sub-row">
+            <input class="add-sub-input" id="subInput_${uid}" placeholder="ชื่อ Project ใหม่..."
+              onkeydown="if(event.key==='Enter')submitSub('${e.category}','${e.id}','${uid}')" />
+            <button class="add-sub-btn" id="subBtn_${uid}" onclick="submitSub('${e.category}','${e.id}','${uid}')">+ เพิ่ม</button>
           </div>
-        ` : ''}
-      </div>`;
+        </div>
+      </div>
+    </div>`;
   }
 
   function toggleSub(uid) {
-    const list = document.getElementById(uid);
-    const tog  = document.getElementById('tog_' + uid);
-    list.classList.toggle('open');
-    tog.classList.toggle('open');
+    document.getElementById(uid).classList.toggle('open');
+    document.getElementById('tog_'+uid).classList.toggle('open');
   }
 
-  // ── SEARCH ────────────────────────────
-  function onSearch(q) {
-    query = q.toLowerCase().trim();
-    renderContent();
+  // ── DELETE CONFIRM ──
+  let _confirmCb = null;
+  function askConfirm(title, msg, cb) {
+    document.getElementById('confirmTitle').textContent = title;
+    document.getElementById('confirmMsg').textContent   = msg;
+    _confirmCb = cb;
+    document.getElementById('overlayConfirm').classList.add('open');
+    document.getElementById('confirmOkBtn').onclick = () => { closeConfirm(); cb(); };
+  }
+  function closeConfirm() { document.getElementById('overlayConfirm').classList.remove('open'); }
+
+  function askDelCat(cat) {
+    askConfirm('ลบหมวดหมู่', `ลบ "${cat}" ออกจากเว็บ? (${getVisibleExts(cat).length} externals จะหายไปด้วย)`, ()=>{
+      if (!del.cats.includes(cat)) del.cats.push(cat);
+      saveDel();
+      const visible = categories.filter(c => !isCatDel(c));
+      if (activeTab === cat) activeTab = visible.find(c => c !== cat) || '';
+      renderTabs(); renderContent();
+      toast(`ลบ "${cat}" แล้ว`,'ok');
+    });
   }
 
+  function askDelExt(cat, id) {
+    askConfirm('ลบ External', `ลบ "${id}" ออกจากเว็บ?`, ()=>{
+      const key = cat+':::'+id;
+      if (!del.exts.includes(key)) del.exts.push(key);
+      saveDel(); renderContent();
+      toast(`ลบ "${id}" แล้ว`,'ok');
+    });
+  }
+
+  function askDelSub(cat, id, sub) {
+    askConfirm('ลบ Project', `ลบ "${sub}" ออกจากเว็บ?`, ()=>{
+      const key = cat+':::'+id+':::'+sub;
+      if (!del.subs.includes(key)) del.subs.push(key);
+      saveDel(); renderContent();
+      toast(`ลบ "${sub}" แล้ว`,'ok');
+    });
+  }
+
+  // ── ADD SUB-PROJECT ──
+  async function submitSub(category, externalId, uid) {
+    const input = document.getElementById('subInput_'+uid);
+    const btn   = document.getElementById('subBtn_'+uid);
+    const name  = input.value.trim();
+    if (!name) return;
+    btn.disabled=true; btn.textContent='...';
+    try {
+      const res = await post({action:'addSubProject', category, externalId, projectName:name});
+      if (!res.success) throw new Error(res.error);
+      toast('เพิ่ม "'+name+'" สำเร็จ ✓','ok');
+      input.value = '';
+      await loadAll();
+      setTimeout(()=>{
+        const list = document.getElementById(uid);
+        const tog  = document.getElementById('tog_'+uid);
+        if (list && tog && !list.classList.contains('open')) tog.click();
+      }, 400);
+    } catch(e) { toast(e.message,'err'); }
+    finally { btn.disabled=false; btn.textContent='+ เพิ่ม'; }
+  }
+
+  // ── SEARCH ──
+  function onSearch(q) { query=q.toLowerCase().trim(); renderContent(); }
   function getFiltered() {
-    const data = allData[activeTab] || [];
+    const data = getVisibleExts(activeTab);
     if (!query) return data;
-    return data.filter(e =>
-      e.id.toLowerCase().includes(query) ||
-      e.mainProject.toLowerCase().includes(query) ||
-      (e.subProjects || []).some(s => s.toLowerCase().includes(query))
-    );
+    return data.filter(e => {
+      const visSubs = (e.subProjects||[]).filter(s => !isSubDel(e.category,e.id,s));
+      return e.id.toLowerCase().includes(query) ||
+             e.mainProject.toLowerCase().includes(query) ||
+             visSubs.some(s => s.toLowerCase().includes(query));
+    });
   }
 
-  // ── ADD EXTERNAL ──────────────────────
+  // ── ADD EXTERNAL ──
   function openAdd() {
-    document.getElementById('addCat').innerHTML =
-      categories.map(c => `<option value="${c}">${c}</option>`).join('');
+    const visible = categories.filter(c => !isCatDel(c));
+    document.getElementById('addCat').innerHTML = visible.map(c=>`<option value="${c}">${c}</option>`).join('');
     if (activeTab) document.getElementById('addCat').value = activeTab;
     document.getElementById('overlayAdd').classList.add('open');
   }
-
   function closeAdd() {
     document.getElementById('overlayAdd').classList.remove('open');
-    ['addId','addMain','addSize','addRemark','addSubs'].forEach(id =>
-      document.getElementById(id).value = '');
+    ['addId','addMain','addSize','addTotal','addRemark','addSubs'].forEach(id=>document.getElementById(id).value='');
   }
-
   async function submitAdd() {
     const cat    = document.getElementById('addCat').value;
     const id     = document.getElementById('addId').value.trim();
     const main   = document.getElementById('addMain').value.trim();
     const size   = document.getElementById('addSize').value.trim();
+    const total  = document.getElementById('addTotal').value.trim();
     const sav    = document.getElementById('addStorAvail').value;
     const status = document.getElementById('addStatus').value;
     const remark = document.getElementById('addRemark').value.trim();
-    const subs   = document.getElementById('addSubs').value
-                     .split('\n').map(s => s.trim()).filter(Boolean);
-
-    if (!id || !main) { toast('กรุณากรอกรหัสและชื่อ Project', 'err'); return; }
-
+    const subs   = document.getElementById('addSubs').value.split('\n').map(s=>s.trim()).filter(Boolean);
+    if (!id||!main) { toast('กรุณากรอกรหัสและชื่อ Project','err'); return; }
     const btn = document.getElementById('addSubmit');
-    btn.disabled = true; btn.textContent = 'กำลังบันทึก...';
+    btn.disabled=true; btn.textContent='กำลังบันทึก...';
     try {
-      const res = await post({ action:'addExternal', category:cat, id, mainProject:main,
-        storageAvailability:sav, size, remark, status, subProjects:subs });
+      const res = await post({action:'addExternal',category:cat,id,mainProject:main,storageAvailability:sav,size,totalCapacity:total,remark,status,subProjects:subs});
       if (!res.success) throw new Error(res.error);
-      toast('เพิ่ม External สำเร็จ ✓', 'ok');
-      closeAdd();
-      await loadAll();
-      switchTab(cat);
-    } catch(e) { toast(e.message, 'err'); }
-    finally { btn.disabled = false; btn.textContent = 'เพิ่ม External'; }
+      toast('เพิ่ม External สำเร็จ ✓','ok');
+      closeAdd(); await loadAll(); switchTab(cat);
+    } catch(e) { toast(e.message,'err'); }
+    finally { btn.disabled=false; btn.textContent='เพิ่ม External'; }
   }
 
-  // ── ADD CATEGORY ──────────────────────
+  // ── ADD CATEGORY ──
   function openCat()  { document.getElementById('overlayCat').classList.add('open'); }
-  function closeCat() { document.getElementById('overlayCat').classList.remove('open');
-                        document.getElementById('catName').value = ''; }
-
+  function closeCat() { document.getElementById('overlayCat').classList.remove('open'); document.getElementById('catName').value=''; }
   async function submitCat() {
     const name = document.getElementById('catName').value.trim();
-    if (!name) { toast('กรุณากรอกชื่อ', 'err'); return; }
+    if (!name) { toast('กรุณากรอกชื่อ','err'); return; }
     try {
-      const res = await post({ action:'addCategory', name });
+      const res = await post({action:'addCategory',name});
       if (!res.success) throw new Error(res.error);
-      toast(`สร้าง "${name}" สำเร็จ ✓`, 'ok');
-      closeCat();
-      await loadAll();
-      switchTab(name);
-    } catch(e) { toast(e.message, 'err'); }
+      toast(`สร้าง "${name}" สำเร็จ ✓`,'ok');
+      closeCat(); await loadAll(); switchTab(name);
+    } catch(e) { toast(e.message,'err'); }
   }
 
-  // ── SETUP ─────────────────────────────
-  function openSetup(required = false) {
-    document.getElementById('urlInput').value = API;
-    document.getElementById('setupCancelBtn').style.display = required ? 'none' : '';
+  // ── SETUP ──
+  function openSetup(required=false) {
+    document.getElementById('urlInput').value=API;
+    document.getElementById('setupCancelBtn').style.display=required?'none':'';
     document.getElementById('overlaySetup').classList.add('open');
   }
-
-  function closeSetup() {
-    document.getElementById('overlaySetup').classList.remove('open');
-  }
-
+  function closeSetup() { document.getElementById('overlaySetup').classList.remove('open'); }
   async function saveUrl() {
     const u = document.getElementById('urlInput').value.trim();
-    if (!u) { toast('กรุณากรอก URL', 'err'); return; }
-    API = u;
-    localStorage.setItem(STORE_KEY, u);
-    closeSetup();
-    await loadAll();
+    if (!u) { toast('กรุณากรอก URL','err'); return; }
+    API=u; localStorage.setItem(STORE_KEY,u); closeSetup(); await loadAll();
   }
 
-  // ── UTILS ─────────────────────────────
+  // ── UTILS ──
   function showLoader() {
-    document.getElementById('mainContent').innerHTML =
-      `<div class="center-msg"><div class="spinner"></div><p>กำลังโหลดข้อมูล...</p></div>`;
-    document.getElementById('tabsBar').innerHTML =
-      `<div class="center-msg" style="padding:10px 0;flex-direction:row;gap:10px;">
-        <div class="spinner" style="width:14px;height:14px;border-width:2px;"></div>
-        <span style="font-size:13px;">กำลังโหลด...</span>
-       </div>`;
-    document.getElementById('statsRow').style.display = 'none';
+    document.getElementById('mainContent').innerHTML='<div class="center-msg"><div class="spinner"></div><p>กำลังโหลดข้อมูล...</p></div>';
+    document.getElementById('tabsBar').innerHTML='<div class="center-msg" style="padding:10px 0;flex-direction:row;gap:10px;"><div class="spinner" style="width:14px;height:14px;border-width:2px;"></div><span style="font-size:13px;">กำลังโหลด...</span></div>';
+    document.getElementById('statsRow').style.display='none';
   }
-
   function showErr(msg) {
-    document.getElementById('mainContent').innerHTML =
-      `<div class="center-msg"><div class="ico">⚠</div><p>${msg}</p>
-       <button class="btn btn-ghost" style="margin-top:12px;" onclick="openSetup()">ตรวจสอบการตั้งค่า</button></div>`;
-    document.getElementById('tabsBar').innerHTML = '';
+    document.getElementById('mainContent').innerHTML=`<div class="center-msg"><div class="ico">⚠</div><p>${msg}</p><button class="btn btn-ghost" style="margin-top:12px;" onclick="openSetup()">ตรวจสอบการตั้งค่า</button></div>`;
+    document.getElementById('tabsBar').innerHTML='';
   }
-
   let toastT;
-  function toast(msg, type = 'ok') {
-    const el = document.getElementById('toast');
-    el.textContent = msg;
-    el.className = `toast ${type} show`;
-    clearTimeout(toastT);
-    toastT = setTimeout(() => el.classList.remove('show'), 3600);
+  function toast(msg,type='ok') {
+    const el=document.getElementById('toast');
+    el.textContent=msg; el.className=`toast ${type} show`;
+    clearTimeout(toastT); toastT=setTimeout(()=>el.classList.remove('show'),3600);
   }
-
-  // Close on backdrop click
-  ['overlaySetup','overlayAdd','overlayCat'].forEach(id => {
-    document.getElementById(id).addEventListener('click', function(e) {
-      if (e.target !== this) return;
-      if (id === 'overlaySetup' && !API) return;
+  ['overlaySetup','overlayAdd','overlayCat','overlayConfirm'].forEach(id=>{
+    document.getElementById(id).addEventListener('click',function(e){
+      if (e.target!==this) return;
+      if (id==='overlaySetup'&&!API) return;
       this.classList.remove('open');
     });
   });
