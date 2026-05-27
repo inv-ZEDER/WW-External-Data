@@ -3,6 +3,7 @@
 ระบบจัดการข้อมูล External Drive สำหรับทีม Widewalker
 
 🔗 **เข้าใช้งาน:** https://inv-ZEDER.github.io/WW-External-Data
+หากเว็ปให้ใส่ลิ้งค์ ให้นำลิ้งค์นี้ไปใส่ https://script.google.com/macros/s/AKfycbwtQ-ZHimMRJeYF5FfsqFj_OUj_cBi0w39XwK22CP69UY_pXzu8mZwn27sxEJ60AIR80g/exec
 
 ---
 
